@@ -288,9 +288,9 @@
     }
     .pin-input:focus { border-color: var(--neon); }
     .pin-err { color: #f87171; font-size: 12px; margin-top: 8px; min-height: 18px; }
+      @keyframes floatBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @media (max-width: 680px) { .iso-msg { display: none; } }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
   <!-- Public Gate Screen -->
@@ -396,10 +396,10 @@
 
       <!-- VIEW 1: PIXEL OFFICE -->
       <section id="view-office" class="sub-panel active">
-        <div class="office-wrap" id="office3dWrap" style="height: 520px; background: #e5e7eb;">
-          <div class="office-overlay-badge" style="z-index:20;">🌐 3D LIVE OFFICE · 마우스 드래그로 회전 / 휠로 줌 / 캐릭터 클릭</div>
-          <div id="threeContainer" style="width:100%; height:100%;"></div>
-          <div id="labelsOverlay" style="position:absolute; inset:0; pointer-events:none; overflow:hidden;"></div>
+        <div class="office-wrap" id="officeStage" style="position:relative; width:100%; aspect-ratio:16/9; background:#111; border-radius:16px; overflow:hidden;">
+          <img src="office_bg.jpg" alt="매또 컴퍼니 가상 사무실" style="width:100%; height:100%; object-fit:cover; display:block;" />
+          <div class="office-overlay-badge" style="z-index:20;">🏢 매또 컴퍼니 LIVE OFFICE · 캐릭터를 클릭하세요</div>
+          <div id="agentsLayer" style="position:absolute; inset:0; z-index:10;"></div>
         </div>
 
         <div class="grid-3" style="margin-top:12px;">
@@ -542,359 +542,41 @@
       btn.classList.add("active");
     }
 
-    // ==================== 3D METAVERSE OFFICE ENGINE DELUXE ====================
+    // ==================== PIXAR ISOMETRIC OFFICE ENGINE ====================
     const AGENTS = [
-      { id: "대표님", team: "<CEO>", label: "기쁨이(대표님)", x: -7, z: -4, homeX: -7, homeZ: -4, tx: -7, tz: -4, skin: 0xfde047, hair: 0x2563eb, suit: 0xfacc15, type: "joy", msg: "매출 도는 자리 가자!", desc: "💛 기쁨이(CEO) · 전체 지휘 및 최종 승인" },
-      { id: "코다리", team: "<총괄·유튜브·Gemini>", label: "슬픔이(코다리)", x: 0, z: 2.5, homeX: 0, homeZ: 2.5, tx: 1.5, tz: 1.5, skin: 0x60a5fa, hair: 0x1d4ed8, suit: 0xf8fafc, type: "sadness", msg: "ZeroCost & 실사 총괄!", desc: "💙 슬픔이(Antigravity · Gemini) · 글로벌 유튜브(@zerocostops) & 시장 실사·웹앱 총괄" },
-      { id: "글쓰기", team: "<블로그팀·Claude>", label: "까칠이(글쓰기)", x: 7, z: -3.5, homeX: 7, homeZ: -3.5, tx: 7, tz: -3.5, skin: 0x86efac, hair: 0x15803d, suit: 0x22c55e, type: "disgust", msg: "AI 티 나는 글 사절!", desc: "💚 까칠이(Claude + writer) · 블로그 대행 원고 작성 & 인간화" },
-      { id: "마케팅", team: "<마케팅팀·Codex>", label: "버럭이(마케팅)", x: 7.5, z: 4, homeX: 7.5, homeZ: 4, tx: 7.5, tz: 4, skin: 0xef4444, hair: 0xf97316, suit: 0x1e293b, type: "anger", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(Codex + marketer) · 에고 라이트 벤치마킹 & 키워드 감시" },
-      { id: "3D호랑이", team: "<3D모션·Claude>", label: "불안이(3D호랑이)", x: -7, z: 4.5, homeX: -7, homeZ: 4.5, tx: -5.5, tz: 3.5, skin: 0xfb923c, hair: 0xea580c, suit: 0xfef3c7, type: "anxiety", msg: "블렌더 3D 렌더링!", desc: "🧡 불안이(Claude + Blender) · 3D 호랑이 광고 & 모션 그래픽" },
-      { id: "철만이PD", team: "<철만이·ChatGPT>", label: "소심이(철만이PD)", x: -2.5, z: -7.5, homeX: -2.5, homeZ: -7.5, tx: -2.5, tz: -7.5, skin: 0xc084fc, hair: 0x581c87, suit: 0x9333ea, type: "fear", msg: "14화 & 중학교 사연!", desc: "💜 소심이(ChatGPT 메인) · @cheolmani_diary 사연 집필 & 업로드" },
-      { id: "인스타팀", team: "<인스타·Gemini>", label: "당황이(인스타)", x: 3.5, z: -7.5, homeX: 3.5, homeZ: -7.5, tx: 3.5, tz: -7.5, skin: 0xf472b6, hair: 0xdb2777, suit: 0xfbcfe8, type: "embarrassment", msg: "인스타 릴스 리뉴얼 대기!", desc: "🩷 당황이(Gemini + 이미지생성) · @jasmin.ver_1.0 수동 리브랜딩 대기" }
+      { id: "대표님", team: "<CEO>", label: "기쁨이(대표님)", x: 21, y: 34, homeX: 21, homeY: 34, tx: 21, ty: 34, bg: "#fde047", ring: "#eab308", msg: "매출 도는 자리 가자!", desc: "💛 기쁨이(CEO) · 전체 지휘 및 최종 승인", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="34" r="22" fill="#fef08a" stroke="#1e293b" stroke-width="3"/><path d="M12 28 Q22 10 42 14 Q52 22 48 30 Q34 18 12 28 Z" fill="#2563eb"/><circle cx="24" cy="34" r="3.5" fill="#0f172a"/><circle cx="40" cy="34" r="3.5" fill="#0f172a"/><path d="M25 43 Q32 49 39 43" stroke="#0f172a" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>` },
+      { id: "코다리", team: "<총괄·유튜브·Gemini>", label: "슬픔이(코다리)", x: 55, y: 63, homeX: 55, homeY: 63, tx: 53, ty: 61, bg: "#60a5fa", ring: "#2563eb", msg: "ZeroCost & 실사 총괄!", desc: "💙 슬픔이(Antigravity · Gemini) · 글로벌 유튜브(@zerocostops) & 시장 실사·웹앱 총괄", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="34" r="22" fill="#93c5fd" stroke="#1e293b" stroke-width="3"/><path d="M11 30 Q32 8 53 30 L50 22 Q32 6 14 22 Z" fill="#1d4ed8"/><circle cx="24" cy="34" r="6" fill="none" stroke="#1e3a8a" stroke-width="2.5"/><circle cx="40" cy="34" r="6" fill="none" stroke="#1e3a8a" stroke-width="2.5"/><circle cx="24" cy="34" r="2.2" fill="#0f172a"/><circle cx="40" cy="34" r="2.2" fill="#0f172a"/></svg>` },
+      { id: "글쓰기", team: "<블로그팀·Claude>", label: "까칠이(글쓰기)", x: 69, y: 42, homeX: 69, homeY: 42, tx: 69, ty: 42, bg: "#86efac", ring: "#16a34a", msg: "AI 티 나는 글 사절!", desc: "💚 까칠이(Claude + writer) · 블로그 대행 원고 작성 & 인간화", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="34" r="22" fill="#86efac" stroke="#1e293b" stroke-width="3"/><path d="M12 28 Q32 10 52 28 Q38 18 12 28 Z" fill="#15803d"/><circle cx="24" cy="34" r="3" fill="#0f172a"/><circle cx="40" cy="34" r="3" fill="#0f172a"/><rect x="20" y="50" width="24" height="8" rx="4" fill="#c084fc"/></svg>` },
+      { id: "마케팅", team: "<마케팅팀·Codex>", label: "버럭이(마케팅)", x: 79, y: 52, homeX: 79, homeY: 52, tx: 79, ty: 52, bg: "#ef4444", ring: "#dc2626", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(Codex + marketer) · 에고 라이트 벤치마킹 & 키워드 감시", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><rect x="12" y="18" width="40" height="34" rx="8" fill="#ef4444" stroke="#1e293b" stroke-width="3"/><polygon points="20,18 26,4 32,16 38,4 44,18" fill="#f97316"/><circle cx="24" cy="34" r="3" fill="#0f172a"/><circle cx="40" cy="34" r="3" fill="#0f172a"/><rect x="22" y="42" width="20" height="4" rx="2" fill="#ffffff"/></svg>` },
+      { id: "3D호랑이", team: "<3D모션·Claude>", label: "불안이(3D호랑이)", x: 47, y: 53, homeX: 47, homeY: 53, tx: 48, ty: 50, bg: "#fb923c", ring: "#ea580c", msg: "블렌더 3D 렌더링!", desc: "🧡 불안이(Claude + Blender) · 3D 호랑이 광고 & 모션 그래픽", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="36" r="21" fill="#fb923c" stroke="#1e293b" stroke-width="3"/><polygon points="18,20 24,4 32,16 40,4 46,20" fill="#ea580c"/><circle cx="24" cy="34" r="5" fill="#ffffff"/><circle cx="40" cy="34" r="5" fill="#ffffff"/><circle cx="24" cy="34" r="2.5" fill="#0f172a"/><circle cx="40" cy="34" r="2.5" fill="#0f172a"/></svg>` },
+      { id: "철만이PD", team: "<철만이·ChatGPT>", label: "소심이(철만이PD)", x: 16, y: 72, homeX: 16, homeY: 72, tx: 16, ty: 72, bg: "#c084fc", ring: "#9333ea", msg: "14화 & 중학교 사연!", desc: "💜 소심이(ChatGPT 메인) · @cheolmani_diary 사연 집필 & 업로드", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="35" r="21" fill="#d8b4fe" stroke="#1e293b" stroke-width="3"/><circle cx="32" cy="11" r="4" fill="#581c87"/><circle cx="24" cy="34" r="4" fill="#ffffff"/><circle cx="40" cy="34" r="4" fill="#ffffff"/><circle cx="24" cy="34" r="2" fill="#0f172a"/><circle cx="40" cy="34" r="2" fill="#0f172a"/><polygon points="24,54 32,50 40,54 32,58" fill="#ef4444"/></svg>` },
+      { id: "인스타팀", team: "<인스타·Gemini>", label: "당황이(인스타)", x: 87, y: 76, homeX: 87, homeY: 76, tx: 87, ty: 76, bg: "#f472b6", ring: "#db2777", msg: "인스타 릴스 리뉴얼 대기!", desc: "🩷 당황이(Gemini + 이미지생성) · @jasmin.ver_1.0 수동 리브랜딩 대기", svg: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="35" r="22" fill="#f9a8d4" stroke="#1e293b" stroke-width="3"/><circle cx="24" cy="35" r="3" fill="#0f172a"/><circle cx="40" cy="35" r="3" fill="#0f172a"/><ellipse cx="18" cy="40" rx="4" ry="2.5" fill="#f43f5e"/><ellipse cx="46" cy="40" rx="4" ry="2.5" fill="#f43f5e"/></svg>` }
     ];
 
-    let scene, camera, renderer, controls, raycaster, mouse;
-    let agentMeshes = [];
-    let frame3d = 0;
+    let agentEls = {};
+    let frameIso = 0;
 
-    function makeWoodTexture() {
-      const c = document.createElement("canvas");
-      c.width = 256; c.height = 256;
-      const g = c.getContext("2d");
-      g.fillStyle = "#b08d6a";
-      g.fillRect(0, 0, 256, 256);
-      for (let y = 0; y < 256; y += 32) {
-        for (let x = 0; x < 256; x += 64) {
-          g.fillStyle = ((x + y) / 32) % 2 === 0 ? "#a4805d" : "#bc9873";
-          g.fillRect(x + ((y / 32) % 2) * 32 - 16, y, 62, 30);
-        }
-      }
-      const tex = new THREE.CanvasTexture(c);
-      tex.wrapS = THREE.RepeatWrapping;
-      tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(8, 7);
-      return tex;
-    }
-
-    function buildEmotionFigure(ag) {
-      const group = new THREE.Group();
-      const darkMat = new THREE.MeshStandardMaterial({ color: 0x0f172a });
-      const suitMat = new THREE.MeshStandardMaterial({ color: ag.suit, roughness: 0.45 });
-      const skinMat = new THREE.MeshStandardMaterial({ color: ag.skin, roughness: 0.4 });
-      const hairMat = new THREE.MeshStandardMaterial({ color: ag.hair, roughness: 0.5 });
-
-      // Shoes & Legs
-      const legL = new THREE.Group();
-      const legMeshL = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.52, 12), darkMat);
-      legMeshL.position.y = -0.26;
-      const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.1, 0.28), darkMat);
-      shoeL.position.set(0, -0.5, 0.05);
-      legL.add(legMeshL, shoeL);
-      legL.position.set(-0.16, 0.55, 0);
-
-      const legR = legL.clone();
-      legR.position.set(0.16, 0.55, 0);
-      group.add(legL, legR);
-
-      // Torso
-      const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.36, 0.85, 16), suitMat);
-      torso.position.y = 0.95;
-      torso.castShadow = true;
-      group.add(torso);
-
-      // Arms
-      const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.65, 10), skinMat);
-      armL.position.set(-0.4, 0.98, 0);
-      armL.rotation.z = 0.15;
-      const armR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.65, 10), skinMat);
-      armR.position.set(0.4, 0.98, 0);
-      armR.rotation.z = -0.15;
-      group.add(armL, armR);
-
-      // Head
-      let head;
-      if (ag.type === "anger") {
-        head = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.62, 0.62), skinMat);
-        head.position.y = 1.72;
-        // Flame crown
-        const flame = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.45, 6), hairMat);
-        flame.position.y = 2.22;
-        group.add(flame);
-        // Red tie
-        const tie = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.45, 0.08), new THREE.MeshStandardMaterial({ color: 0xb91c1c }));
-        tie.position.set(0, 1.05, 0.34);
-        group.add(tie);
-      } else {
-        head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 24, 24), skinMat);
-        head.position.y = 1.72;
-        const hair = new THREE.Mesh(new THREE.SphereGeometry(0.42, 20, 16, 0, Math.PI * 2, 0, Math.PI * 0.56), hairMat);
-        hair.position.y = 1.77;
-        group.add(hair);
-
-        if (ag.type === "sadness") {
-          // Cute round glasses
-          const glMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a });
-          const glL = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.022, 8, 16), glMat);
-          glL.position.set(-0.14, 1.73, 0.37);
-          const glR = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.022, 8, 16), glMat);
-          glR.position.set(0.14, 1.73, 0.37);
-          group.add(glL, glR);
-        } else if (ag.type === "anxiety") {
-          // Spiky orange tufts
-          for (let sx of [-0.14, 0, 0.14]) {
-            const tuft = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.35, 6), hairMat);
-            tuft.position.set(sx, 2.2, 0);
-            group.add(tuft);
-          }
-        } else if (ag.type === "fear") {
-          // Bowtie
-          const bow = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.1, 0.08), new THREE.MeshStandardMaterial({ color: 0xef4444 }));
-          bow.position.set(0, 1.32, 0.32);
-          group.add(bow);
-        }
-      }
-      head.castShadow = true;
-      group.add(head);
-
-      // Big Cute Sparkly Eyes
-      const eyeWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const eyePupil = new THREE.MeshBasicMaterial({ color: 0x0f172a });
-      for (let ex of [-0.14, 0.14]) {
-        const ew = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), eyeWhite);
-        ew.position.set(ex, 1.73, 0.34);
-        const ep = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 10), eyePupil);
-        ep.position.set(ex, 1.73, 0.4);
-        group.add(ew, ep);
-      }
-
-      // Floor glow ring
-      const ring = new THREE.Mesh(new THREE.RingGeometry(0.52, 0.64, 28), new THREE.MeshBasicMaterial({ color: ag.skin, side: THREE.DoubleSide }));
-      ring.rotation.x = -Math.PI / 2;
-      ring.position.y = 0.02;
-      group.add(ring);
-
-      return { group, legL, legR, armL, armR };
-    }
-
-    function init3DOffice() {
-      const container = document.getElementById("threeContainer");
-      const overlay = document.getElementById("labelsOverlay");
-      if (!container || typeof THREE === "undefined") return;
-
-      const w = container.clientWidth || 900;
-      const h = container.clientHeight || 520;
-
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xe0f2fe);
-      scene.fog = new THREE.Fog(0xe0f2fe, 28, 60);
-
-      camera = new THREE.PerspectiveCamera(46, w / h, 0.1, 120);
-      camera.position.set(0, 6.2, 14.5);
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(w, h);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.domElement.style.maxWidth = "100%";
-      renderer.domElement.style.display = "block";
-      container.innerHTML = "";
-      container.appendChild(renderer.domElement);
-
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.maxPolarAngle = Math.PI / 2.15;
-      controls.minDistance = 6;
-      controls.maxDistance = 28;
-      controls.target.set(0, 1.2, -1);
-
-      // Warm Studio Lighting
-      scene.add(new THREE.HemisphereLight(0xffffff, 0xcbd5e1, 0.95));
-      const dir = new THREE.DirectionalLight(0xfffbeb, 0.85);
-      dir.position.set(10, 18, 12);
-      dir.castShadow = true;
-      dir.shadow.mapSize.set(1024, 1024);
-      scene.add(dir);
-
-      // Herringbone Wood Floor
-      const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(36, 28),
-        new THREE.MeshStandardMaterial({ map: makeWoodTexture(), roughness: 0.7 })
-      );
-      floor.rotation.x = -Math.PI / 2;
-      floor.receiveShadow = true;
-      scene.add(floor);
-
-      // Bright White Walls
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.85 });
-      const backWall = new THREE.Mesh(new THREE.BoxGeometry(36, 7.5, 0.4), wallMat);
-      backWall.position.set(0, 3.75, -13);
-      scene.add(backWall);
-      const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 7.5, 28), wallMat);
-      leftWall.position.set(-17, 3.75, 0);
-      scene.add(leftWall);
-      const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 7.5, 28), wallMat);
-      rightWall.position.set(17, 3.75, 0);
-      scene.add(rightWall);
-
-      // Skylight Ceiling Grid (High above)
-      const beamMat = new THREE.MeshStandardMaterial({ color: 0x334155 });
-      for (let bx = -14; bx <= 14; bx += 7) {
-        const beam = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 26), beamMat);
-        beam.position.set(bx, 8.8, 0);
-        scene.add(beam);
-      }
-      for (let bz = -10; bz <= 10; bz += 5) {
-        const beam = new THREE.Mesh(new THREE.BoxGeometry(34, 0.35, 0.4), beamMat);
-        beam.position.set(0, 8.8, bz);
-        scene.add(beam);
-      }
-
-      // Gallery Frames & Big Dashboard TV on Back Wall
-      const artColors = [0x38bdf8, 0x22c55e, 0xfbbf24, 0xf472b6, 0xa855f7];
-      for (let i = -2; i <= 2; i++) {
-        const fr = new THREE.Mesh(new THREE.BoxGeometry(3.0, 2.0, 0.12), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
-        fr.position.set(i * 6.0, 3.8, -12.75);
-        scene.add(fr);
-        const art = new THREE.Mesh(new THREE.BoxGeometry(2.7, 1.7, 0.14), new THREE.MeshStandardMaterial({ color: artColors[i + 2] }));
-        art.position.set(i * 6.0, 3.8, -12.72);
-        scene.add(art);
-      }
-
-      // Bookshelves along side wall
-      function addBookshelf(x, z) {
-        const shelf = new THREE.Mesh(new THREE.BoxGeometry(1.0, 3.2, 3.6), new THREE.MeshStandardMaterial({ color: 0x78350f }));
-        shelf.position.set(x, 1.6, z);
-        shelf.castShadow = true;
-        scene.add(shelf);
-        const bColors = [0xef4444, 0x3b82f6, 0x22c55e, 0xfacc15, 0xa855f7];
-        for (let row of [0.9, 1.7, 2.5]) {
-          for (let k = -1.3; k <= 1.3; k += 0.38) {
-            const book = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 0.25), new THREE.MeshStandardMaterial({ color: bColors[Math.abs(Math.round(k * 10)) % bColors.length] }));
-            book.position.set(x + 0.25, row, z + k);
-            scene.add(book);
-          }
-        }
-      }
-      addBookshelf(-16.2, -5);
-      addBookshelf(-16.2, 1);
-
-      // Potted Office Plants
-      function addPlant(x, z) {
-        const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.28, 0.65, 12), new THREE.MeshStandardMaterial({ color: 0xf8fafc }));
-        pot.position.set(x, 0.32, z);
-        scene.add(pot);
-        const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a });
-        for (let a = 0; a < 5; a++) {
-          const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.42, 10, 10), leafMat);
-          leaf.position.set(x + Math.cos(a * 1.2) * 0.22, 0.95 + (a % 2) * 0.2, z + Math.sin(a * 1.2) * 0.22);
-          scene.add(leaf);
-        }
-      }
-      addPlant(-12, -10);
-      addPlant(12, -10);
-      addPlant(-12, 8);
-      addPlant(12, 8);
-
-      // Lounge Sofa Area (Right Front)
-      const rug = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.04, 4.5), new THREE.MeshStandardMaterial({ color: 0xf1f5f9 }));
-      rug.position.set(12.5, 0.02, -5.5);
-      scene.add(rug);
-      const sofa = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 3.8), new THREE.MeshStandardMaterial({ color: 0x7c3aed }));
-      sofa.position.set(14.5, 0.4, -5.5);
-      sofa.castShadow = true;
-      scene.add(sofa);
-
-      // White Conference / Work Tables with Laptops & Chairs
-      function addTableGroup(tx, tz) {
-        const tableTop = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.16, 2.3), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25 }));
-        tableTop.position.set(tx, 0.92, tz);
-        tableTop.castShadow = true;
-        tableTop.receiveShadow = true;
-        scene.add(tableTop);
-
-        const legMat = new THREE.MeshStandardMaterial({ color: 0x334155 });
-        for (let lx of [-2.0, 2.0]) {
-          for (let lz of [-0.9, 0.9]) {
-            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.92), legMat);
-            leg.position.set(tx + lx, 0.46, tz + lz);
-            scene.add(leg);
-          }
-        }
-        for (let ox of [-1.2, 1.2]) {
-          const lap = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.05, 0.48), new THREE.MeshStandardMaterial({ color: 0xcbd5e1 }));
-          lap.position.set(tx + ox, 1.02, tz + 0.25);
-          scene.add(lap);
-          const scr = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.42, 0.04), new THREE.MeshStandardMaterial({ color: 0x0f172a, emissive: 0x2563eb, emissiveIntensity: 0.45 }));
-          scr.position.set(tx + ox, 1.24, tz + 0.46);
-          scr.rotation.x = -0.25;
-          scene.add(scr);
-        }
-        const chairMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
-        for (let cx of [-1.2, 1.2]) {
-          for (let cz of [-1.55, 1.55]) {
-            const seat = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.12, 0.68), chairMat);
-            seat.position.set(tx + cx, 0.55, tz + cz);
-            scene.add(seat);
-            const back = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.78, 0.12), chairMat);
-            back.position.set(tx + cx, 0.94, tz + cz + (cz > 0 ? 0.3 : -0.3));
-            scene.add(back);
-          }
-        }
-      }
-
-      addTableGroup(-6.5, -3.5);
-      addTableGroup(6.5, -3.5);
-      addTableGroup(-6.5, 4.5);
-      addTableGroup(6.5, 4.5);
-
-      // Build 3D Emotion Characters + DOM Floating Labels
-      overlay.innerHTML = "";
-      agentMeshes = AGENTS.map((ag) => {
-        const fig = buildEmotionFigure(ag);
-        fig.group.position.set(ag.x, 0, ag.z);
-        fig.group.userData = { agentId: ag.id };
-        scene.add(fig.group);
-
-        const lbl = document.createElement("div");
-        lbl.style.cssText = "position:absolute; transform:translate(-50%,-100%); text-align:center; pointer-events:auto; cursor:pointer;";
-        lbl.innerHTML = `
-          <div style="background:rgba(15,23,42,0.92); border:1.5px solid #22c55e; color:#4ade80; font-size:12px; font-weight:800; padding:2px 8px; border-radius:6px; white-space:nowrap;">${ag.team} ${ag.label}</div>
-          <div class="ag-msg" style="background:rgba(255,255,255,0.96); color:#111827; font-size:12px; font-weight:700; padding:2px 9px; border-radius:6px; margin-top:3px; box-shadow:0 3px 8px rgba(0,0,0,0.25); white-space:nowrap;">${ag.msg}</div>
+    function initIsoOffice() {
+      const layer = document.getElementById("agentsLayer");
+      if (!layer) return;
+      layer.innerHTML = "";
+      AGENTS.forEach(ag => {
+        const el = document.createElement("div");
+        el.style.cssText = `position:absolute; left:${ag.x}%; top:${ag.y}%; transform:translate(-50%,-75%); cursor:pointer; text-align:center; transition: left 0.4s ease, top 0.4s ease;`;
+        el.onclick = () => selectAgent(ag.id);
+        el.innerHTML = `
+          <div class="iso-msg" style="background:rgba(15,23,42,0.92); color:#fff; border:1.5px solid ${ag.bg}; font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; white-space:nowrap; margin-bottom:4px; box-shadow:0 4px 10px rgba(0,0,0,0.35);">${ag.msg}</div>
+          <div style="display:inline-flex; padding:3px; border-radius:50%; background:rgba(255,255,255,0.88); border:2.5px solid ${ag.ring}; box-shadow:0 6px 14px rgba(0,0,0,0.35); animation: floatBob 2.4s ease-in-out infinite;">
+            ${ag.svg}
+          </div>
+          <div style="margin-top:3px; background:rgba(15,23,42,0.92); color:#4ade80; font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; white-space:nowrap; border:1px solid #22c55e;">${ag.team} ${ag.label}</div>
         `;
-        lbl.onclick = () => select3DAgent(ag.id);
-        overlay.appendChild(lbl);
-
-        return { ag, ...fig, lbl };
-      });
-
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
-      renderer.domElement.addEventListener("click", (e) => {
-        const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-        const hits = raycaster.intersectObjects(agentMeshes.map(m => m.group), true);
-        if (hits.length > 0) {
-          let obj = hits[0].object;
-          while (obj.parent && !obj.userData.agentId) obj = obj.parent;
-          if (obj.userData.agentId) select3DAgent(obj.userData.agentId);
-        }
-      });
-
-      window.addEventListener("resize", () => {
-        if (!container || !renderer) return;
-        const nw = container.clientWidth;
-        const nh = container.clientHeight;
-        if (nw > 0 && nh > 0) {
-          camera.aspect = nw / nh;
-          camera.updateProjectionMatrix();
-          renderer.setSize(nw, nh);
-        }
+        layer.appendChild(el);
+        agentEls[ag.id] = el;
       });
     }
 
-    function select3DAgent(id) {
+    function selectAgent(id) {
       const ag = AGENTS.find(a => a.id === id);
       if (!ag) return;
       document.getElementById("selName").textContent = `${ag.team} ${ag.label}`;
@@ -903,59 +585,24 @@
     }
 
     function tick() {
-      frame3d++;
-      if (!renderer || !scene || !camera) init3DOffice();
-
-      if (autoMode && frame3d % 180 === 0) {
+      frameIso++;
+      if (!Object.keys(agentEls).length) initIsoOffice();
+      if (autoMode && frameIso % 180 === 0) {
         AGENTS.forEach(a => {
           if (a.id === "대표님") return;
-          if (Math.random() > 0.35) {
-            a.tx = a.homeX + (Math.random() * 4 - 2);
-            a.tz = a.homeZ + (Math.random() * 3 - 1.5);
+          if (Math.random() > 0.45) {
+            a.tx = Math.max(10, Math.min(90, a.homeX + (Math.random() * 6 - 3)));
+            a.ty = Math.max(20, Math.min(86, a.homeY + (Math.random() * 6 - 3)));
           } else {
-            a.tx = a.homeX; a.tz = a.homeZ;
+            a.tx = a.homeX; a.ty = a.homeY;
+          }
+          const el = agentEls[a.id];
+          if (el) {
+            el.style.left = a.tx + "%";
+            el.style.top = a.ty + "%";
           }
         });
       }
-
-      const container = document.getElementById("threeContainer");
-      const w = container ? container.clientWidth : 900;
-      const h = container ? container.clientHeight : 520;
-
-      agentMeshes.forEach(({ ag, group, legL, legR, armL, armR, lbl }) => {
-        const dx = ag.tx - ag.x;
-        const dz = ag.tz - ag.z;
-        const dist = Math.hypot(dx, dz);
-        if (dist > 0.05) {
-          ag.x += dx * 0.03;
-          ag.z += dz * 0.03;
-          group.rotation.y = Math.atan2(dx, dz);
-          legL.rotation.x = Math.sin(frame3d * 0.2) * 0.45;
-          legR.rotation.x = -Math.sin(frame3d * 0.2) * 0.45;
-          armL.rotation.x = -Math.sin(frame3d * 0.2) * 0.35;
-          armR.rotation.x = Math.sin(frame3d * 0.2) * 0.35;
-        } else {
-          legL.rotation.x = 0; legR.rotation.x = 0;
-          armL.rotation.x = 0; armR.rotation.x = 0;
-        }
-        group.position.set(ag.x, 0, ag.z);
-
-        if (camera && w > 0) {
-          const pos = new THREE.Vector3(ag.x, 2.55, ag.z);
-          pos.project(camera);
-          if (pos.z < 1) {
-            lbl.style.display = "block";
-            lbl.style.left = ((pos.x * 0.5 + 0.5) * w) + "px";
-            lbl.style.top = ((-(pos.y * 0.5) + 0.5) * h) + "px";
-            lbl.querySelector(".ag-msg").textContent = ag.msg;
-          } else {
-            lbl.style.display = "none";
-          }
-        }
-      });
-
-      if (controls) controls.update();
-      if (renderer && scene && camera) renderer.render(scene, camera);
       requestAnimationFrame(tick);
     }
 
@@ -978,7 +625,7 @@
       const ag = AGENTS.find(a => a.id === targetId);
       if (ag) {
         ag.msg = txt.slice(0, 14) + (txt.length > 14 ? "..." : "");
-        ag.tx = 0; ag.tz = 0; // 회의실 테이블로 집결!
+        ag.tx = 49; ag.ty = 28; if(agentEls[ag.id]){agentEls[ag.id].style.left='49%';agentEls[ag.id].style.top='28%';agentEls[ag.id].querySelector('.iso-msg').textContent=ag.msg;} // 회의실 테이블로 집결!
       }
 
       input.value = "";
