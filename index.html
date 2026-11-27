@@ -568,10 +568,12 @@
       scene.fog = new THREE.Fog(0xdbeafe, 24, 52);
 
       camera = new THREE.PerspectiveCamera(48, w / h, 0.1, 100);
-      camera.position.set(0, 9, 14);
+      camera.position.set(0, 4.8, 12.2);
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(w, h);
+      renderer.domElement.style.maxWidth = "100%";
+      renderer.domElement.style.display = "block";
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       container.innerHTML = "";
@@ -632,16 +634,16 @@
         scene.add(canvasArt);
       }
 
-      // Skylight Ceiling Grid
+      // Skylight Ceiling Grid (High above camera view)
       const beamMat = new THREE.MeshStandardMaterial({ color: 0x475569 });
       for (let bx = -12; bx <= 12; bx += 6) {
         const beam = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.3, 24), beamMat);
-        beam.position.set(bx, 6, 0);
+        beam.position.set(bx, 8.2, 0);
         scene.add(beam);
       }
       for (let bz = -10; bz <= 10; bz += 5) {
         const beam = new THREE.Mesh(new THREE.BoxGeometry(30, 0.3, 0.35), beamMat);
-        beam.position.set(0, 6, bz);
+        beam.position.set(0, 8.2, bz);
         scene.add(beam);
       }
 
