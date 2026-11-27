@@ -241,10 +241,83 @@
       .workspace { order: 1; padding: 12px; }
       .grid-3, .grid-2 { grid-template-columns: 1fr; }
     }
+
+    /* Public Gate & PIN Modal */
+    .gate-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #0c2419 0%, #050a08 65%);
+    }
+    .gate-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(10, 20, 16, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 30px rgba(34, 197, 94, 0.12);
+      text-align: center;
+    }
+    .gate-badge {
+      display: inline-block;
+      font-size: 11px; font-weight: 800; color: var(--neon-bright);
+      background: #0b291c; border: 1px solid var(--neon);
+      padding: 4px 10px; border-radius: 99px; margin-bottom: 14px;
+    }
+    .gate-title { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.4px; }
+    .gate-desc { font-size: 13px; color: #a7f3d0; margin: 10px 0 22px; line-height: 1.55; }
+    .gate-services {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px; text-align: left;
+    }
+    .gate-srv {
+      background: var(--panel-2); border: 1px solid #163b2c; border-radius: 10px;
+      padding: 10px; font-size: 12px; color: var(--text);
+    }
+    .gate-srv strong { display: block; color: var(--neon-bright); margin-bottom: 2px; font-size: 12px; }
+    .pin-box {
+      border-top: 1px solid #163b2c; padding-top: 18px;
+    }
+    .pin-row { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+    .pin-input {
+      width: 150px; text-align: center; letter-spacing: 6px; font-size: 16px; font-weight: 800;
+      background: #050a08; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--neon-bright); padding: 10px; outline: none;
+    }
+    .pin-input:focus { border-color: var(--neon); }
+    .pin-err { color: #f87171; font-size: 12px; margin-top: 8px; min-height: 18px; }
   </style>
 </head>
 <body>
-  <div class="app">
+  <!-- Public Gate Screen -->
+  <div id="gateScreen" class="gate-screen">
+    <div class="gate-card">
+      <div class="gate-badge">⚡ JJAN AI STUDIO · LIVE</div>
+      <div class="gate-title">JJAN AI STUDIO</div>
+      <div class="gate-desc">
+        블렌더 3D 모션 광고 · 맞춤형 AI 웹앱 · 자동화 스튜디오<br/>
+        대표님과 AI 에이전트 팀이 함께 운영하는 1인 AI 본부입니다.
+      </div>
+      <div class="gate-services">
+        <div class="gate-srv"><strong>🐯 3D 모션 광고</strong>블로그·릴스용 3D 캐릭터</div>
+        <div class="gate-srv"><strong>🏫 학원·매장 웹앱</strong>1분 진단 & 카톡 즉시 알림</div>
+        <div class="gate-srv"><strong>🧹 가견적 자동화</strong>청소·이사 1분 예상 견적</div>
+        <div class="gate-srv"><strong>✍️ AI 글쓰기</strong>사람 말투 맞춤형 콘텐츠</div>
+      </div>
+      <div class="pin-box">
+        <div style="font-size:12px; color:var(--text-dim); font-weight:700;">🔐 대표님 본부 출입 (PIN 입력)</div>
+        <div class="pin-row">
+          <input id="pinInput" class="pin-input" type="password" maxlength="8" placeholder="••••" />
+          <button class="cmd-btn" onclick="unlockOffice()" style="padding: 0 18px;">입장 ⚡</button>
+        </div>
+        <div id="pinErr" class="pin-err"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="mainApp" style="display:none;">
     <!-- Left Command Console -->
     <aside class="console">
       <div>
@@ -309,6 +382,7 @@
           <button class="nav-pill active" onclick="switchView('office', this)">🏢 사무실</button>
           <button class="nav-pill" onclick="switchView('todo', this)">✅ 할 일 (<span id="todoBadge">0</span>)</button>
           <button class="nav-pill" onclick="switchView('tracks', this)">🚀 전략판</button>
+          <button class="nav-pill" onclick="lockOffice()" title="사무실 잠그기">🔒 잠금</button>
         </div>
       </div>
 
@@ -682,9 +756,41 @@
       if (e.key === "Enter") dispatchCommand();
     });
 
-    renderLogs();
-    renderTodos();
-    tick();
+    // PIN Gate Logic (Default PIN: 0909)
+    const STUDIO_PIN_HASH = "0909";
+    function showOffice() {
+      document.getElementById("gateScreen").style.display = "none";
+      document.getElementById("mainApp").style.display = "grid";
+      renderLogs();
+      renderTodos();
+      if (!window._officeLoopStarted) {
+        window._officeLoopStarted = true;
+        tick();
+      }
+    }
+    function unlockOffice() {
+      const val = document.getElementById("pinInput").value.trim();
+      if (val === STUDIO_PIN_HASH) {
+        localStorage.setItem("jjan_hq_unlocked", "1");
+        document.getElementById("pinErr").textContent = "";
+        showOffice();
+      } else {
+        document.getElementById("pinErr").textContent = "출입 코드가 일치하지 않습니다.";
+      }
+    }
+    function lockOffice() {
+      localStorage.removeItem("jjan_hq_unlocked");
+      document.getElementById("pinInput").value = "";
+      document.getElementById("mainApp").style.display = "none";
+      document.getElementById("gateScreen").style.display = "flex";
+    }
+    document.getElementById("pinInput").addEventListener("keypress", e => {
+      if (e.key === "Enter") unlockOffice();
+    });
+
+    if (localStorage.getItem("jjan_hq_unlocked") === "1") {
+      showOffice();
+    }
   </script>
 </body>
 </html>
