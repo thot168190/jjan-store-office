@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>코다리 가상 스튜디오 | 1인 AI 기업 본부</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-2: #f1f3f6;
+      --border: #e5e8ec;
+      --text: #111827;
+      --text-sub: #6b7280;
+      --accent: #111827;
+      --brand: #2563eb;
+      --brand-soft: #eff6ff;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --purple: #7c3aed;
+      --purple-soft: #f5f3ff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Sidebar (Desktop) */
+    .sidebar {
+      width: 230px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .logo-box {
+      padding: 6px 10px 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .logo-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-sub {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover { background: var(--surface-2); color: var(--text); }
+    .nav-btn.active { background: var(--accent); color: #fff; }
+    .nav-badge {
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 99px;
+      background: rgba(107,114,128,0.15);
+    }
+    .nav-btn.active .nav-badge { background: rgba(255,255,255,0.22); color: #fff; }
+
+    .status-box {
+      background: var(--surface-2);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12px;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 6px;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 28px 32px;
+      max-width: 1180px;
+      width: 100%;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    .page-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .top-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Mobile Tab Bar */
+    .mobile-tabs {
+      display: none;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-tabs .nav-btn {
+      width: auto;
+      white-space: nowrap;
+      padding: 8px 12px;
+      font-size: 13px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .mobile-tabs .nav-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Cards & Grids */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .kpi-label { font-size: 12px; color: var(--text-sub); font-weight: 600; }
+    .kpi-val { font-size: 22px; font-weight: 800; margin-top: 6px; }
+    .kpi-sub { font-size: 11px; color: var(--green); margin-top: 4px; font-weight: 600; }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .agent-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .agent-id {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: var(--surface-2);
+      flex-shrink: 0;
+    }
+    .agent-name { font-size: 15px; font-weight: 700; }
+    .agent-role { font-size: 12px; color: var(--text-sub); }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .badge-green { background: var(--green-soft); color: var(--green); }
+    .badge-blue { background: var(--brand-soft); color: var(--brand); }
+    .badge-amber { background: var(--amber-soft); color: var(--amber); }
+    .badge-purple { background: var(--purple-soft); color: var(--purple); }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      font-size: 11px;
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .agent-duty {
+      font-size: 13px;
+      color: #374151;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .agent-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-sub);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    /* Todo List */
+    .todo-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .todo-input {
+      flex: 1;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      background: var(--surface);
+      outline: none;
+    }
+    .todo-input:focus { border-color: var(--brand); }
+    .todo-select {
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .todo-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .todo-left input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .todo-text {
+      font-size: 14px;
+      font-weight: 500;
+      word-break: break-word;
+    }
+    .todo-item.done .todo-text {
+      text-decoration: line-through;
+      color: var(--text-sub);
+    }
+    .todo-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .del-btn {
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+    .del-btn:hover { color: #ef4444; }
+
+    /* Track cards */
+    .track-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .track-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .track-list li {
+      background: var(--surface-2);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .mobile-tabs { display: flex; }
+      .main { padding: 16px; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .todo-input-row { flex-wrap: wrap; }
+      .todo-select { height: 42px; flex: 1; }
+      .btn-primary { height: 42px; padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="logo-box">
+          <div class="logo-title">🏢 코다리 가상 스튜디오</div>
+          <div class="logo-sub">대표님 직속 1인 AI 본부</div>
+        </div>
+        <div class="nav-list">
+          <button class="nav-btn active" onclick="switchTab('todo', this)">
+            <span>✅ 오늘 할 일</span>
+            <span class="nav-badge" id="todoCountBadge">0</span>
+          </button>
+          <button class="nav-btn" onclick="switchTab('team', this)">
+            <span>🤖 AI 직원 & 분장</span>
+            <span class="nav-badge">5명</span>
+          </button>
+          <button class="nav-btn" onclick="switchTab('tracks', this)">
+            <span>🚀 투 트랙 사업판</span>
+          </button>
+          <button class="nav-btn" onclick="switchTab('assets', this)">
+            <span>🧰 보유 무기 & 채널</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="status-box">
+        <div><span class="status-dot"></span><strong>스튜디오 정상 가동 중</strong></div>
+        <div style="color: var(--text-sub); margin-top: 6px; line-height: 1.4;">
+          대표님 모드: 크레딧 절약<br/>
+          기본 브라우저: Ego Lite<br/>
+          2026-11-27 기준
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="page-title" id="headerTitle">✅ 오늘 할 일 & 실행 보드</div>
+          <div class="page-desc">대표님과 AI 직원들이 오늘 처리할 작업과 업무 분장을 한눈에 관리합니다.</div>
+        </div>
+        <div class="top-pill">👑 대표님 × 🫡 총괄부장 코다리</div>
+      </div>
+
+      <!-- Mobile Tabs -->
+      <div class="mobile-tabs">
+        <button class="nav-btn active" onclick="switchTab('todo', this, true)">✅ 오늘 할 일</button>
+        <button class="nav-btn" onclick="switchTab('team', this, true)">🤖 AI 직원</button>
+        <button class="nav-btn" onclick="switchTab('tracks', this, true)">🚀 투 트랙</button>
+        <button class="nav-btn" onclick="switchTab('assets', this, true)">🧰 보유 무기</button>
+      </div>
+
+      <!-- 1. TODO -->
+      <section id="tab-todo" class="section active">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">남은 할 일</div>
+            <div class="kpi-val" id="kpiRemain">0건</div>
+            <div class="kpi-sub">실시간 체크</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">완료한 일</div>
+            <div class="kpi-val" id="kpiDone">0건</div>
+            <div class="kpi-sub">누적 달성</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">출근한 AI 직원</div>
+            <div class="kpi-val">5팀</div>
+            <div class="kpi-sub">전원 진단 OK</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">주력 수익 타깃</div>
+            <div class="kpi-val">학원·청소</div>
+            <div class="kpi-sub">블로그+3D+웹앱</div>
+          </div>
+        </div>
+
+        <div class="todo-input-row">
+          <input id="todoInput" class="todo-input" type="text" placeholder="대표님, 새로운 할 일을 입력하세요..." />
+          <select id="todoOwner" class="todo-select">
+            <option value="대표님">👑 대표님</option>
+            <option value="코다리">🫡 코다리</option>
+            <option value="글쓰기직원">✍️ 글쓰기</option>
+            <option value="마케팅팀">📣 마케팅</option>
+            <option value="블렌더/모션">🎬 3D/모션</option>
+          </select>
+          <button class="btn-primary" onclick="addTodo()">추가</button>
+        </div>
+
+        <div id="todoList" class="todo-list"></div>
+      </section>
+
+      <!-- 2. AI TEAM -->
+      <section id="tab-team" class="section">
+        <div class="grid-3">
+          <div class="card">
+            <div>
+              <div class="agent-head">
+                <div class="agent-id">
+                  <div class="avatar">🫡</div>
+                  <div>
+                    <div class="agent-name">코다리 부장</div>
+                    <div class="agent-role">Antigravity · 총괄/리서치</div>
+                  </div>
+                </div>
+                <span class="badge badge-green">가동 중</span>
+              </div>
+              <div class="agent-duty" style="margin-top: 12px;">
+                <strong>담당 업무:</strong> 시장 실거래 조사(ego-browser), 사업 구조 해부, 1분 진단/가견적 웹앱 개발, 전체 직원 지휘.
+              </div>
+            </div>
+            <div>
+              <div class="skill-tags" style="margin-bottom: 10px;">
+                <span class="tag">ego-browser</span>
+                <span class="tag">reversebusiness</span>
+                <span class="tag">웹앱 코딩</span>
+              </div>
+              <div class="agent-foot"><span>상태: 대기 완료</span><span>대표님 직속</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="agent-head">
+                <div class="agent-id">
+                  <div class="avatar">✍️</div>
+                  <div>
+                    <div class="agent-name">글쓰기 직원</div>
+                    <div class="agent-role">connect-ai-writer · v0.3.1</div>
+                  </div>
+                </div>
+                <span class="badge badge-blue">세팅 완료</span>
+              </div>
+              <div class="agent-duty" style="margin-top: 12px;">
+                <strong>담당 업무:</strong> 네이버 블로그·스레드 글 작성, AI 말투 제거(humanize), 카드뉴스 이미지 생성 및 네이버 임시저장.
+              </div>
+            </div>
+            <div>
+              <div class="skill-tags" style="margin-bottom: 10px;">
+                <span class="tag">네이버 블로그</span>
+                <span class="tag">AI티 제거</span>
+                <span class="tag">임시저장</span>
+              </div>
+              <div class="agent-foot"><span>진단: ALL OK</span><span>블로그 대행 핵심</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="agent-head">
+                <div class="agent-id">
+                  <div class="avatar">📣</div>
+                  <div>
+                    <div class="agent-name">마케팅 팀</div>
+                    <div class="agent-role">connect-ai-marketer · v0.1</div>
+                  </div>
+                </div>
+                <span class="badge badge-blue">세팅 완료</span>
+              </div>
+              <div class="agent-duty" style="margin-top: 12px;">
+                <strong>담당 업무:</strong> 떡상 영상/제목 벤치마킹, 도입부 3초 해부, 학원·블로그·청소 키워드 매일 리스닝, SNS 동시 홍보.
+              </div>
+            </div>
+            <div>
+              <div class="skill-tags" style="margin-bottom: 10px;">
+                <span class="tag">benchmarker</span>
+                <span class="tag">breakdown</span>
+                <span class="tag">listener</span>
+              </div>
+              <div class="agent-foot"><span>키워드 4개 세팅</span><span>승인함 안전장치</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="agent-head">
+                <div class="agent-id">
+                  <div class="avatar">🐯</div>
+                  <div>
+                    <div class="agent-name">3D · 모션 팀</div>
+                    <div class="agent-role">Blender MCP + connect-ai-motion</div>
+                  </div>
+                </div>
+                <span class="badge badge-purple">장전 완료</span>
+              </div>
+              <div class="agent-duty" style="margin-top: 12px;">
+                <strong>담당 업무:</strong> 2D 대신 블렌더 3D 광고 영상 제작, 블로그 돌아다니는 캐릭터(열공 친구/청소 호랑이) GIF 움짤 생성.
+              </div>
+            </div>
+            <div>
+              <div class="skill-tags" style="margin-bottom: 10px;">
+                <span class="tag">Blender 3D</span>
+                <span class="tag">83개 모션씬</span>
+                <span class="tag">GIF 움짤</span>
+              </div>
+              <div class="agent-foot"><span>차별화 무기 1위</span><span>테스트 대기</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="agent-head">
+                <div class="agent-id">
+                  <div class="avatar">🎬</div>
+                  <div>
+                    <div class="agent-name">유튜브 채널 팀</div>
+                    <div class="agent-role">철만이 & ZeroCost Ops</div>
+                  </div>
+                </div>
+                <span class="badge badge-amber">운영 중</span>
+              </div>
+              <div class="agent-duty" style="margin-top: 12px;">
+                <strong>담당 업무:</strong> 철만이 사연 채널(구독자 100명+) 및 글로벌 ZeroCost Ops 무료 TTS 영상 제작·업로드 마무리.
+              </div>
+            </div>
+            <div>
+              <div class="skill-tags" style="margin-bottom: 10px;">
+                <span class="tag">studio-finisher</span>
+                <span class="tag">Kokoro TTS $0</span>
+              </div>
+              <div class="agent-foot"><span>구독자 사연 접수됨</span><span>자산 누적</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. TRACKS -->
+      <section id="tab-tracks" class="section">
+        <div class="grid-2">
+          <div class="card">
+            <div>
+              <div class="track-title">💰 단기 현금 트랙 (오늘 ~ 6개월)</div>
+              <p class="page-desc" style="margin-bottom: 12px;">감이 아니라 실제 크몽·시장 영수증으로 검증된 돈 도는 자리</p>
+              <ul class="track-list">
+                <li><strong>1. 내 블로그 먼저 실전 테스트:</strong> 글쓰기 직원 + 블렌더 3D 캐릭터 GIF 짤 넣어서 테스트베드 운영</li>
+                <li><strong>2. 학원 원장님 패키지 (키핑):</strong> 동네 학교 맞춤 블로그 + 1분 진단/상담 웹앱 + 원장님 즉시 카톡 알림</li>
+                <li><strong>3. 청소·이사 사장님 패키지 (병행):</strong> 입주/이사 블로그 + 1분 평수 예상 견적 웹앱 (범위 표시)</li>
+                <li><strong>4. 판매 홍보 방식:</strong> 남들처럼 2D 썸네일 말고 <strong>블렌더 3D 광고 영상</strong>으로 한 방에 차별화!</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="track-title">🚀 장기 미래 트랙 (2 ~ 3년 투자)</div>
+              <p class="page-desc" style="margin-bottom: 12px;">피지컬 AI(로봇) 일상화 시대에 대비하는 튼튼한 본진</p>
+              <ul class="track-list">
+                <li><strong>1. 3D 웹 & 가상 쇼룸 역량 축적:</strong> 지금 연습하는 블렌더 3D와 모션 그래픽 실력을 그대로 브랜드 3D 웹(건당 120만+)으로 연결</li>
+                <li><strong>2. 소상공인·중소현장 피지컬 AI 세팅 대비:</strong> 2~3년 뒤 동네 식당·창고·학원에 로봇이 들어올 때, 3D 공간(XR) 복제 + 강화학습 시뮬레이션 맞춤 세팅</li>
+                <li><strong>3. 유튜브 자산 채널:</strong> 철만이(5070 사연) + ZeroCost Ops 꾸준한 팬덤 축적</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ASSETS -->
+      <section id="tab-assets" class="section">
+        <div class="grid-2">
+          <div class="card">
+            <div>
+              <div class="track-title">📚 공부방 핵심 자료 & 리포트</div>
+              <ul class="track-list">
+                <li><strong>멘토 자료 총정리:</strong> 01_교재_및_기획문서/2026-11-27_멘토자료_총정리_및_가용무기_로드맵.md</li>
+                <li><strong>AI 직원 도구 폴더:</strong> 05_AI_직원_도구/ (connect-ai-marketer, connect-ai-writer)</li>
+                <li><strong>최신 업무 인계서:</strong> 00_코다리_업무인계_최신.md</li>
+                <li><strong>철만이 사연 백로그:</strong> 02_유튜브_철만이/cheolmani_haircut_story_draft.md</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div>
+              <div class="track-title">🌐 운영 채널 현황</div>
+              <ul class="track-list">
+                <li><strong>철만이가 들려주는 이야기:</strong> @cheolmani_diary (사연 댓글: 중학교 머리밀기전)</li>
+                <li><strong>ZeroCost Ops (글로벌):</strong> @zerocostops (Kokoro TTS $0 세팅 완료)</li>
+                <li><strong>Jasmin Ver 1.0 (인스타):</strong> @jasmin.ver_1.0 (수동 대기 / 자동 크론 정지)</li>
+                <li><strong>도메인 jjan.store:</strong> ~2027-04-23 (연장 X · 3D광고/청소 데모용)</li>
+                <li><strong>도메인 inkword.site:</strong> ~2027-07-05 (연장 X · 블로그/학원 웹앱용)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const DEFAULT_TODOS = [
+      { id: 1, text: "멘토 강의 자료 총정리본 훑어보며 흐름 익히기", owner: "대표님", done: false },
+      { id: 2, text: "에고 라이트(Ego Lite)에서 네이버·유튜브 로그인 1회 해두기", owner: "대표님", done: false },
+      { id: 3, text: "대표님 테스트 블로그 주제 정하고 글쓰기 직원으로 첫 글 뽑아보기", owner: "글쓰기직원", done: false },
+      { id: 4, text: "블렌더 켜서 3D 호랑이 / 열공 친구 캐릭터 움직이는 GIF 테스트", owner: "블렌더/모션", done: false },
+      { id: 5, text: "철만이 14화 업로드 및 '중학교 머리밀기' 사연 원고 집필", owner: "대표님", done: false }
+    ];
+
+    let todos = JSON.parse(localStorage.getItem("kodari_studio_todos") || "null") || DEFAULT_TODOS;
+
+    function saveTodos() {
+      localStorage.setItem("kodari_studio_todos", JSON.stringify(todos));
+      renderTodos();
+    }
+
+    function renderTodos() {
+      const list = document.getElementById("todoList");
+      list.innerHTML = "";
+      const remain = todos.filter(t => !t.done).length;
+      const done = todos.filter(t => t.done).length;
+      document.getElementById("kpiRemain").textContent = remain + "건";
+      document.getElementById("kpiDone").textContent = done + "건";
+      document.getElementById("todoCountBadge").textContent = remain;
+
+      const badgeMap = {
+        "대표님": "badge-amber",
+        "코다리": "badge-green",
+        "글쓰기직원": "badge-blue",
+        "마케팅팀": "badge-blue",
+        "블렌더/모션": "badge-purple"
+      };
+
+      todos.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "todo-item" + (item.done ? " done" : "");
+        div.innerHTML = `
+          <div class="todo-left">
+            <input type="checkbox" ${item.done ? "checked" : ""} onchange="toggleTodo(${item.id})" />
+            <span class="todo-text">${escapeHtml(item.text)}</span>
+          </div>
+          <div class="todo-right">
+            <span class="badge ${badgeMap[item.owner] || 'badge-blue'}">${escapeHtml(item.owner)}</span>
+            <button class="del-btn" onclick="deleteTodo(${item.id})" title="삭제">✕</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function addTodo() {
+      const input = document.getElementById("todoInput");
+      const owner = document.getElementById("todoOwner").value;
+      const text = input.value.trim();
+      if (!text) return;
+      todos.unshift({ id: Date.now(), text, owner, done: false });
+      input.value = "";
+      saveTodos();
+    }
+
+    function toggleTodo(id) {
+      todos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
+      saveTodos();
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter(t => t.id !== id);
+      saveTodos();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    document.getElementById("todoInput").addEventListener("keypress", e => {
+      if (e.key === "Enter") addTodo();
+    });
+
+    const TITLES = {
+      todo: "✅ 오늘 할 일 & 실행 보드",
+      team: "🤖 AI 직원 & 업무 분장 조직도",
+      tracks: "🚀 투 트랙 사업 전략판",
+      assets: "🧰 보유 무기 & 운영 채널"
+    };
+
+    function switchTab(tabId, btn, isMobile) {
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById("tab-" + tabId).classList.add("active");
+      document.getElementById("headerTitle").textContent = TITLES[tabId];
+
+      document.querySelectorAll(".sidebar .nav-btn, .mobile-tabs .nav-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(`button[onclick*="'${tabId}'"]`).forEach(b => b.classList.add("active"));
+    }
+
+    renderTodos();
+  </script>
+</body>
+</html>
