@@ -341,11 +341,12 @@
         <input id="cmdInput" class="cmd-input" type="text" placeholder="한 줄 명령을 내리세요 (예: 학원 블로그 글 써봐)" />
         <div class="cmd-foot">
           <select id="cmdTarget" class="cmd-select">
-            <option value="코다리">💙 슬픔이 (코다리)</option>
-            <option value="글쓰기">💚 까칠이 (글쓰기)</option>
-            <option value="마케팅">❤️ 버럭이 (마케팅)</option>
+            <option value="코다리">💙 슬픔이 (총괄·글로벌유튜브)</option>
+            <option value="글쓰기">💚 까칠이 (블로그팀)</option>
+            <option value="마케팅">❤️ 버럭이 (마케팅팀)</option>
             <option value="3D호랑이">🧡 불안이 (3D·모션)</option>
-            <option value="유튜브PD">💜 소심이 (유튜브)</option>
+            <option value="철만이PD">💜 소심이 (철만이채널)</option>
+            <option value="인스타팀">🩷 당황이 (인스타부서)</option>
           </select>
           <button class="cmd-btn" onclick="dispatchCommand()">명령 실행 ⚡</button>
         </div>
@@ -543,12 +544,13 @@
 
     // ==================== 3D METAVERSE OFFICE ENGINE (Three.js) ====================
     const AGENTS = [
-      { id: "대표님", team: "<CEO>", label: "기쁨이(대표님)", x: -4, z: -2, homeX: -4, homeZ: -2, tx: -4, tz: -2, skin: 0xfde047, hair: 0x2563eb, suit: 0xfacc15, type: "joy", msg: "매출 도는 자리 가자!", desc: "💛 기쁨이(CEO) · 전체 지휘 및 최종 승인" },
-      { id: "코다리", team: "<총괄팀>", label: "슬픔이(코다리)", x: 0, z: 2, homeX: 0, homeZ: 2, tx: 1.5, tz: 1.0, skin: 0x60a5fa, hair: 0x1d4ed8, suit: 0xf8fafc, type: "sadness", msg: "영수증 팩트 체크 중...", desc: "💙 슬픔이(코다리부장) · 시장 실사 & 웹앱 설계" },
-      { id: "글쓰기", team: "<작가팀>", label: "까칠이(글쓰기)", x: 5, z: -3, homeX: 5, homeZ: -3, tx: 5, tz: -3, skin: 0x86efac, hair: 0x15803d, suit: 0x22c55e, type: "disgust", msg: "AI 티 나는 글 사절!", desc: "💚 까칠이(connect-ai-writer) · 사람 말투 원고" },
-      { id: "마케팅", team: "<홍보팀>", label: "버럭이(마케팅)", x: 6, z: 3, homeX: 6, homeZ: 3, tx: 6, tz: 3, skin: 0xef4444, hair: 0xf97316, suit: 0x1e293b, type: "anger", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(connect-ai-marketer) · 벤치마킹 & 감시" },
-      { id: "3D호랑이", team: "<3D모션>", label: "불안이(3D호랑이)", x: -5, z: 4, homeX: -5, homeZ: 4, tx: -3.5, tz: 3, skin: 0xfb923c, hair: 0xea580c, suit: 0xfef3c7, type: "anxiety", msg: "블렌더 3D 렌더링!", desc: "🧡 불안이(Blender+Motion) · 3D 호랑이 광고" },
-      { id: "유튜브PD", team: "<영상팀>", label: "소심이(유튜브)", x: 2, z: -6, homeX: 2, homeZ: -6, tx: 2, tz: -6, skin: 0xc084fc, hair: 0x581c87, suit: 0x9333ea, type: "fear", msg: "업로드 실수 없게 확인!", desc: "💜 소심이(YouTube PD) · 철만이 & ZeroCost" }
+      { id: "대표님", team: "<CEO>", label: "기쁨이(대표님)", x: -5, z: -3, homeX: -5, homeZ: -3, tx: -5, tz: -3, skin: 0xfde047, hair: 0x2563eb, suit: 0xfacc15, type: "joy", msg: "매출 도는 자리 가자!", desc: "💛 기쁨이(CEO) · 전체 지휘 및 최종 승인" },
+      { id: "코다리", team: "<총괄·유튜브·Gemini>", label: "슬픔이(코다리)", x: 0, z: 1.5, homeX: 0, homeZ: 1.5, tx: 1.2, tz: 0.8, skin: 0x60a5fa, hair: 0x1d4ed8, suit: 0xf8fafc, type: "sadness", msg: "ZeroCost & 실사 총괄!", desc: "💙 슬픔이(Antigravity · Gemini) · 글로벌 유튜브(@zerocostops) & 시장 실사·웹앱 총괄" },
+      { id: "글쓰기", team: "<블로그팀·Claude>", label: "까칠이(글쓰기)", x: 5, z: -3, homeX: 5, homeZ: -3, tx: 5, tz: -3, skin: 0x86efac, hair: 0x15803d, suit: 0x22c55e, type: "disgust", msg: "AI 티 나는 글 사절!", desc: "💚 까칠이(Claude + writer) · 블로그 대행 원고 작성 & 인간화" },
+      { id: "마케팅", team: "<마케팅팀·Codex>", label: "버럭이(마케팅)", x: 6, z: 3.5, homeX: 6, homeZ: 3.5, tx: 6, tz: 3.5, skin: 0xef4444, hair: 0xf97316, suit: 0x1e293b, type: "anger", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(Codex + marketer) · 에고 라이트 벤치마킹 & 키워드 감시" },
+      { id: "3D호랑이", team: "<3D모션·Claude>", label: "불안이(3D호랑이)", x: -5, z: 4, homeX: -5, homeZ: 4, tx: -3.5, tz: 3, skin: 0xfb923c, hair: 0xea580c, suit: 0xfef3c7, type: "anxiety", msg: "블렌더 3D 렌더링!", desc: "🧡 불안이(Claude + Blender) · 3D 호랑이 광고 & 모션 그래픽" },
+      { id: "철만이PD", team: "<철만이·ChatGPT>", label: "소심이(철만이PD)", x: -1.5, z: -6, homeX: -1.5, homeZ: -6, tx: -1.5, tz: -6, skin: 0xc084fc, hair: 0x581c87, suit: 0x9333ea, type: "fear", msg: "14화 & 중학교 사연!", desc: "💜 소심이(ChatGPT 메인) · @cheolmani_diary 사연 집필 & 업로드" },
+      { id: "인스타팀", team: "<인스타·Gemini>", label: "당황이(인스타)", x: 3.5, z: -6.5, homeX: 3.5, homeZ: -6.5, tx: 3.5, tz: -6.5, skin: 0xf472b6, hair: 0xdb2777, suit: 0xfbcfe8, type: "embarrassment", msg: "인스타 릴스 리뉴얼 대기!", desc: "🩷 당황이(Gemini + 이미지생성) · @jasmin.ver_1.0 수동 리브랜딩 대기" }
     ];
 
     let scene, camera, renderer, controls, raycaster, mouse;
