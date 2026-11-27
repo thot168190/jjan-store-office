@@ -75,8 +75,8 @@
       background: var(--panel-2);
       border: 1px solid #163b2c;
       border-radius: 10px;
-      padding: 10px;
-      font-size: 12px;
+      padding: 12px;
+      font-size: 14px;
       line-height: 1.45;
     }
     .log-card.ceo { border-color: #854d0e; background: #171206; }
@@ -211,8 +211,8 @@
     .dark-card {
       background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
     }
-    .dark-card h3 { font-size: 14px; color: var(--neon-bright); margin-bottom: 8px; }
-    .dark-card p, .dark-card li { font-size: 12px; color: #d1fae5; line-height: 1.5; }
+    .dark-card h3 { font-size: 16px; color: var(--neon-bright); margin-bottom: 8px; }
+    .dark-card p, .dark-card li { font-size: 14px; color: #d1fae5; line-height: 1.5; }
     .dark-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
     .dark-card li { background: var(--panel-2); padding: 8px 10px; border-radius: 8px; border: 1px solid #163b2c; }
 
@@ -224,7 +224,7 @@
     }
     .todo-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
     .todo-left input { width: 17px; height: 17px; accent-color: var(--neon); cursor: pointer; }
-    .todo-text { font-size: 13px; color: var(--text); word-break: break-word; }
+    .todo-text { font-size: 15px; color: var(--text); word-break: break-word; }
     .todo-item.done .todo-text { text-decoration: line-through; color: var(--muted); }
     .owner-tag {
       font-size: 11px; padding: 2px 8px; border-radius: 6px;
@@ -339,11 +339,11 @@
         <input id="cmdInput" class="cmd-input" type="text" placeholder="한 줄 명령을 내리세요 (예: 학원 블로그 글 써봐)" />
         <div class="cmd-foot">
           <select id="cmdTarget" class="cmd-select">
-            <option value="코다리">🐟 코다리 부장</option>
-            <option value="글쓰기">🦉 글쓰기 작가</option>
-            <option value="마케팅">🦊 마케팅 여우</option>
-            <option value="3D호랑이">🐯 3D 호랑이</option>
-            <option value="유튜브PD">🐻 유튜브 PD</option>
+            <option value="코다리">💙 슬픔이 (코다리)</option>
+            <option value="글쓰기">💚 까칠이 (글쓰기)</option>
+            <option value="마케팅">❤️ 버럭이 (마케팅)</option>
+            <option value="3D호랑이">🧡 불안이 (3D·모션)</option>
+            <option value="유튜브PD">💜 소심이 (유튜브)</option>
           </select>
           <button class="cmd-btn" onclick="dispatchCommand()">명령 실행 ⚡</button>
         </div>
@@ -543,161 +543,198 @@
     const ctx = canvas.getContext("2d");
 
     const AGENTS = [
-      { id: "대표님", label: "CEO", x: 140, y: 165, homeX: 140, homeY: 165, tx: 140, ty: 165, color: "#fbbf24", hair: "#451a03", shirt: "#f59e0b", msg: "매출 도는 자리 찾자!", desc: "CEO 전용실 · 최종 의사결정 및 사업 방향 지휘" },
-      { id: "코다리", label: "코다리부장", x: 350, y: 310, homeX: 350, homeY: 310, tx: 460, ty: 240, color: "#60a5fa", hair: "#1e3a8a", shirt: "#2563eb", msg: "시장 영수증 분석 중!", desc: "전략 데스크 · ego-browser 실사 & 웹앱 설계" },
-      { id: "글쓰기", label: "WRITER", x: 560, y: 310, homeX: 560, homeY: 310, tx: 560, ty: 310, color: "#a78bfa", hair: "#312e81", shirt: "#6366f1", msg: "블로그 원고 작성 중...", desc: "작가실 · connect-ai-writer 사람 말투 원고 생성" },
-      { id: "마케팅", label: "MARKETER", x: 800, y: 175, homeX: 800, homeY: 175, tx: 800, ty: 175, color: "#fb923c", hair: "#7c2d12", shirt: "#ea580c", msg: "키워드 스캔 가동!", desc: "홍보 레이더실 · 떡상 벤치마킹 & 키워드 감시" },
-      { id: "3D호랑이", label: "3D호랑이", x: 510, y: 145, homeX: 510, homeY: 145, tx: 460, ty: 185, color: "#fcd34d", hair: "#b45309", shirt: "#d97706", msg: "호랑이 3D 렌더링!", desc: "크리에이티브 룸 · 블렌더 3D 광고 & GIF 움짤" },
-      { id: "유튜브PD", label: "유튜브PD", x: 240, y: 420, homeX: 240, homeY: 420, tx: 300, ty: 420, color: "#4ade80", hair: "#14532d", shirt: "#16a34a", msg: "철만이 14화 대기!", desc: "편집 스튜디오 · 철만이 & ZeroCost Ops 영상" }
+      { id: "대표님", label: "기쁨이(CEO)", role: "기쁨이 · CEO", x: 135, y: 165, homeX: 135, homeY: 165, tx: 135, ty: 165, skin: "#fef08a", hair: "#2563eb", shirt: "#fde047", accent: "#60a5fa", type: "joy", msg: "재밌게 돈 벌어보자!", desc: "💛 기쁨이(CEO) · 전체 방향 지휘 및 최종 승인" },
+      { id: "코다리", label: "슬픔이(코다리)", role: "슬픔이 · 총괄/팩트", x: 365, y: 315, homeX: 365, homeY: 315, tx: 460, ty: 245, skin: "#60a5fa", hair: "#1d4ed8", shirt: "#f8fafc", accent: "#1e3a8a", type: "sadness", msg: "영수증 팩트 체크 중...", desc: "💙 슬픔이(코다리부장) · 꼼꼼한 시장 실사 & 웹앱 설계" },
+      { id: "글쓰기", label: "까칠이(작가)", role: "까칠이 · 글쓰기", x: 575, y: 315, homeX: 575, homeY: 315, tx: 575, ty: 315, skin: "#86efac", hair: "#15803d", shirt: "#22c55e", accent: "#c084fc", type: "disgust", msg: "AI 티 나는 글은 사절!", desc: "💚 까칠이(connect-ai-writer) · 퀄리티 검수 & 사람 말투 원고" },
+      { id: "마케팅", label: "버럭이(마케팅)", role: "버럭이 · 마케팅", x: 815, y: 175, homeX: 815, homeY: 175, tx: 815, ty: 175, skin: "#ef4444", hair: "#f97316", shirt: "#ffffff", accent: "#b91c1c", type: "anger", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(connect-ai-marketer) · 공격적 벤치마킹 & 키워드 감시" },
+      { id: "3D호랑이", label: "불안이(3D모션)", role: "불안이 · 3D/모션", x: 515, y: 155, homeX: 515, homeY: 155, tx: 470, ty: 185, skin: "#fb923c", hair: "#ea580c", shirt: "#fef3c7", accent: "#9a3412", type: "anxiety", msg: "블렌더 3D로 앞서가자!", desc: "🧡 불안이(Blender+Motion) · 3D 호랑이 광고 & 움직이는 짤" },
+      { id: "유튜브PD", label: "소심이(유튜브)", role: "소심이 · 유튜브PD", x: 245, y: 425, homeX: 245, homeY: 425, tx: 290, ty: 425, skin: "#c084fc", hair: "#581c87", shirt: "#a855f7", accent: "#ef4444", type: "fear", msg: "업로드 실수 없게 확인!", desc: "💜 소심이(YouTube PD) · 철만이 & ZeroCost 안전 업로드" }
     ];
 
     let frame = 0;
 
-    function drawPixelRect(x, y, w, h, fill, stroke) {
-      ctx.fillStyle = fill;
-      ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
-      if (stroke) {
-        ctx.strokeStyle = stroke;
-        ctx.lineWidth = 2;
-        ctx.strokeRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
-      }
+    function drawRoundRect(x, y, w, h, r, fill, stroke) {
+      ctx.beginPath();
+      ctx.roundRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h), r);
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); }
     }
 
     function drawOfficeMap() {
-      // Floor tiles
-      ctx.fillStyle = "#d8cfc2";
+      // Warm Wood & Cozy Studio Floor
+      ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, 960, 540);
-      ctx.strokeStyle = "rgba(0,0,0,0.06)";
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.18)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < 960; x += 32) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 540); ctx.stroke();
-      }
-      for (let y = 0; y < 540; y += 32) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(960, y); ctx.stroke();
-      }
+      for (let x = 0; x < 960; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 540); ctx.stroke(); }
+      for (let y = 0; y < 540; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(960, y); ctx.stroke(); }
 
-      // Top Windows Wall
-      drawPixelRect(0, 0, 960, 56, "#2c353d");
-      for (let wx = 40; wx < 900; wx += 180) {
-        drawPixelRect(wx, 8, 130, 40, "#7dd3fc", "#1e293b");
-        drawPixelRect(wx + 10, 12, 30, 32, "rgba(255,255,255,0.35)");
+      // Top Panoramic Window Wall
+      drawRoundRect(0, 0, 960, 58, 0, "#1e293b");
+      for (let wx = 36; wx < 910; wx += 184) {
+        drawRoundRect(wx, 8, 146, 42, 6, "#bae6fd", "#0f172a");
+        ctx.fillStyle = "rgba(255,255,255,0.45)";
+        ctx.fillRect(wx + 12, 12, 24, 34);
+        ctx.fillRect(wx + 44, 12, 10, 34);
       }
 
-      // Room 1: CEO Office (Top Left)
-      drawPixelRect(24, 70, 220, 175, "#e7dcc8", "#64748b");
-      drawPixelRect(30, 76, 80, 18, "#0f172a");
-      ctx.fillStyle = "#fbbf24"; ctx.font = "bold 11px monospace"; ctx.fillText("CEO ROOM", 40, 89);
-      // CEO Desk
-      drawPixelRect(80, 120, 110, 42, "#78350f", "#451a03");
-      drawPixelRect(115, 110, 36, 22, "#1e293b", "#0f172a"); // monitor
+      // Room 1: CEO JOY Room (Warm Cream)
+      drawRoundRect(22, 70, 224, 178, 12, "#fef9c3", "#d97706");
+      drawRoundRect(30, 76, 102, 20, 6, "#111827");
+      ctx.fillStyle = "#fde047"; ctx.font = "bold 13px sans-serif"; ctx.fillText("💛 CEO 기쁨실", 38, 90);
+      drawRoundRect(74, 122, 120, 44, 8, "#b45309", "#78350f");
+      drawRoundRect(114, 110, 40, 24, 4, "#1e293b", "#0f172a");
 
-      // Room 2: Meeting / Creative Hub (Top Center)
-      drawPixelRect(270, 70, 410, 175, "#e2e8f0", "#64748b");
-      drawPixelRect(278, 76, 135, 18, "#0f172a");
-      ctx.fillStyle = "#4ade80"; ctx.fillText("CONNECT AI LAB", 286, 89);
-      // Round Meeting Table
-      ctx.fillStyle = "#cbd5e1"; ctx.beginPath(); ctx.ellipse(475, 165, 85, 45, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = "#475569"; ctx.lineWidth = 3; ctx.stroke();
+      // Room 2: Core Memory / Meeting Hub (Soft Mint-White)
+      drawRoundRect(268, 70, 416, 178, 12, "#f1f5f9", "#64748b");
+      drawRoundRect(278, 76, 148, 20, 6, "#111827");
+      ctx.fillStyle = "#4ade80"; ctx.fillText("✨ 아이디어 회의실", 288, 90);
+      // Colorful Memory Orbs on wall
+      ["#fde047", "#60a5fa", "#86efac", "#fb923c", "#c084fc"].forEach((c, idx) => {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(540 + idx * 24, 86, 7, 0, Math.PI * 2); ctx.fill();
+      });
+      // Meeting Table
+      ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(476, 166, 92, 46, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 3; ctx.stroke();
 
-      // Room 3: Marketing Radar (Top Right)
-      drawPixelRect(705, 70, 230, 175, "#ede9fe", "#64748b");
-      drawPixelRect(713, 76, 110, 18, "#0f172a");
-      ctx.fillStyle = "#fb923c"; ctx.fillText("MARKETING", 722, 89);
-      drawPixelRect(755, 120, 110, 40, "#57534e", "#292524");
-      drawPixelRect(780, 112, 30, 20, "#22c55e", "#052e16");
+      // Room 3: Marketing Radar (Soft Coral)
+      drawRoundRect(706, 70, 232, 178, 12, "#fee2e2", "#ef4444");
+      drawRoundRect(714, 76, 122, 20, 6, "#111827");
+      ctx.fillStyle = "#fca5a5"; ctx.fillText("❤️ 버럭 마케팅실", 722, 90);
+      drawRoundRect(758, 122, 118, 42, 8, "#57534e", "#292524");
+      drawRoundRect(796, 112, 42, 22, 4, "#22c55e", "#052e16");
 
-      // Center Workstations (Desks)
-      for (let dx of [310, 520]) {
-        drawPixelRect(dx, 285, 120, 46, "#64748b", "#334155");
-        drawPixelRect(dx + 25, 275, 32, 20, "#0ea5e9", "#0f172a");
-        drawPixelRect(dx + 65, 275, 32, 20, "#22c55e", "#0f172a");
+      // Center Desks (Sadness & Disgust)
+      for (let dx of [305, 520]) {
+        drawRoundRect(dx, 286, 130, 48, 8, "#cbd5e1", "#475569");
+        drawRoundRect(dx + 22, 274, 36, 22, 4, "#38bdf8", "#0f172a");
+        drawRoundRect(dx + 72, 274, 36, 22, 4, "#4ade80", "#0f172a");
       }
 
-      // Bottom Left: Lounge & Video Studio
-      drawPixelRect(24, 340, 320, 175, "#dcfce7", "#64748b");
-      drawPixelRect(32, 346, 120, 18, "#0f172a");
-      ctx.fillStyle = "#4ade80"; ctx.fillText("VIDEO STUDIO", 40, 359);
-      // Sofa
-      drawPixelRect(55, 430, 95, 42, "#3b82f6", "#1e3a8a");
-      // Editing Desk
-      drawPixelRect(190, 385, 110, 38, "#78350f", "#451a03");
+      // Bottom Left: Video Studio (Soft Lavender)
+      drawRoundRect(22, 342, 326, 178, 12, "#f3e8ff", "#9333ea");
+      drawRoundRect(30, 348, 135, 20, 6, "#111827");
+      ctx.fillStyle = "#d8b4fe"; ctx.fillText("💜 소심 유튜브 스튜디오", 38, 362);
+      drawRoundRect(46, 430, 100, 46, 10, "#a855f7", "#581c87"); // cozy sofa
+      drawRoundRect(188, 386, 116, 40, 8, "#78350f", "#451a03");
 
-      // Bottom Right: Library / Archive
-      drawPixelRect(680, 340, 255, 175, "#fef3c7", "#64748b");
-      drawPixelRect(688, 346, 120, 18, "#0f172a");
-      ctx.fillStyle = "#fbbf24"; ctx.fillText("ARCHIVE & 3D", 696, 359);
-      // Bookshelves
-      drawPixelRect(710, 390, 190, 30, "#92400e", "#451a03");
-      drawPixelRect(710, 450, 190, 30, "#92400e", "#451a03");
+      // Bottom Right: Cozy Cafe & 3D Archive
+      drawRoundRect(682, 342, 256, 178, 12, "#ffedd5", "#ea580c");
+      drawRoundRect(690, 348, 145, 20, 6, "#111827");
+      ctx.fillStyle = "#fdba74"; ctx.fillText("🧡 블렌더 3D & 카페", 698, 362);
+      drawRoundRect(712, 392, 196, 30, 6, "#b45309", "#451a03");
+      drawRoundRect(712, 448, 196, 30, 6, "#b45309", "#451a03");
 
-      // Plants
-      for (let [px, py] of [[255, 255], [690, 255], [40, 310], [900, 310]]) {
-        drawPixelRect(px, py + 12, 16, 14, "#b45309", "#451a03");
-        ctx.fillStyle = "#16a34a"; ctx.beginPath(); ctx.arc(px + 8, py + 6, 12, 0, Math.PI * 2); ctx.fill();
+      // Cute Potted Plants
+      for (let [px, py] of [[254, 258], [692, 258], [38, 312], [906, 312]]) {
+        drawRoundRect(px, py + 10, 18, 14, 4, "#d97706", "#78350f");
+        ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(px + 9, py + 4, 12, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#86efac"; ctx.beginPath(); ctx.arc(px + 6, py + 1, 5, 0, Math.PI * 2); ctx.fill();
       }
     }
 
     function drawAgent(a) {
-      const bob = Math.sin(frame * 0.12 + a.homeX) * 2;
+      const bob = Math.sin(frame * 0.11 + a.homeX) * 2.5;
       const x = Math.round(a.x);
       const y = Math.round(a.y + bob);
 
-      // Shadow
-      ctx.fillStyle = "rgba(0,0,0,0.22)";
-      ctx.beginPath(); ctx.ellipse(x, a.y + 18, 13, 5, 0, 0, Math.PI * 2); ctx.fill();
+      // Soft Shadow
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.beginPath(); ctx.ellipse(x, a.y + 20, 14, 5, 0, 0, Math.PI * 2); ctx.fill();
 
-      // Body (Pixel Sprite Style)
-      drawPixelRect(x - 10, y - 4, 20, 18, a.shirt, "#0f172a");
-      // Head
-      drawPixelRect(x - 11, y - 24, 22, 20, "#fde68a", "#0f172a");
-      // Hair/Hat
-      drawPixelRect(x - 12, y - 28, 24, 9, a.hair, "#0f172a");
-      // Eyes
+      // Cute Chibi Body
+      drawRoundRect(x - 10, y - 2, 20, 20, 7, a.shirt, "#1e293b");
+
+      // Character Specific Accessories & Hair
+      if (a.type === "anger") {
+        // Boxy head + flame on top
+        drawRoundRect(x - 13, y - 24, 26, 22, 5, a.skin, "#1e293b");
+        ctx.fillStyle = "#f97316";
+        ctx.beginPath(); ctx.moveTo(x - 8, y - 24); ctx.lineTo(x - 3, y - 35); ctx.lineTo(x + 2, y - 26); ctx.lineTo(x + 7, y - 36); ctx.lineTo(x + 10, y - 24); ctx.fill();
+        // Tie
+        ctx.fillStyle = a.accent; ctx.fillRect(x - 2, y + 1, 4, 12);
+      } else {
+        // Round cute head
+        ctx.fillStyle = a.skin; ctx.beginPath(); ctx.arc(x, y - 14, 13, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 2; ctx.stroke();
+
+        // Hair style
+        ctx.fillStyle = a.hair;
+        if (a.type === "joy") {
+          ctx.beginPath(); ctx.arc(x, y - 19, 13, Math.PI, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x - 9, y - 15, 5, 0, Math.PI * 2); ctx.fill();
+        } else if (a.type === "sadness") {
+          ctx.beginPath(); ctx.arc(x, y - 18, 13, Math.PI * 0.9, Math.PI * 2.1); ctx.fill();
+          // Big round glasses!
+          ctx.strokeStyle = "#1e3a8a"; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(x - 5, y - 13, 4.5, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(x + 5, y - 13, 4.5, 0, Math.PI * 2); ctx.stroke();
+        } else if (a.type === "disgust") {
+          ctx.beginPath(); ctx.arc(x, y - 19, 13, Math.PI, Math.PI * 2); ctx.fill();
+          // Purple scarf
+          drawRoundRect(x - 9, y - 3, 18, 5, 2, a.accent);
+        } else if (a.type === "anxiety") {
+          // Wild spiky orange hair
+          ctx.beginPath(); ctx.moveTo(x - 10, y - 22); ctx.lineTo(x - 6, y - 34); ctx.lineTo(x, y - 26); ctx.lineTo(x + 6, y - 35); ctx.lineTo(x + 11, y - 22); ctx.fill();
+        } else if (a.type === "fear") {
+          // Single curly hair + bowtie
+          ctx.beginPath(); ctx.arc(x, y - 29, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = a.accent; ctx.fillRect(x - 5, y - 2, 10, 4);
+        }
+      }
+
+      // Cute Sparkly Eyes
       ctx.fillStyle = "#0f172a";
-      ctx.fillRect(x - 6, y - 16, 3, 4);
-      ctx.fillRect(x + 3, y - 16, 3, 4);
+      ctx.beginPath(); ctx.arc(x - 5, y - 13, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + 5, y - 13, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x - 6, y - 14, 1.5, 1.5);
+      ctx.fillRect(x + 4, y - 14, 1.5, 1.5);
+
+      // Smile
+      ctx.strokeStyle = "#0f172a"; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      if (a.type === "sadness") ctx.arc(x, y - 7, 3, Math.PI * 1.1, Math.PI * 1.9);
+      else ctx.arc(x, y - 10, 3.5, 0.1 * Math.PI, 0.9 * Math.PI);
+      ctx.stroke();
 
       // Nameplate
-      ctx.font = "bold 10px monospace";
-      const tw = ctx.measureText(a.label).width + 10;
-      drawPixelRect(x - tw / 2, a.y + 22, tw, 15, "#0f172a");
+      ctx.font = "bold 13px sans-serif";
+      const tw = ctx.measureText(a.label).width + 12;
+      drawRoundRect(x - tw / 2, a.y + 22, tw, 22, 6, "#0f172a");
       ctx.fillStyle = "#ffffff";
-      ctx.fillText(a.label, x - tw / 2 + 5, a.y + 33);
+      ctx.fillText(a.label, x - tw / 2 + 6, a.y + 37);
 
       // Speech Bubble
       if (a.msg) {
-        ctx.font = "bold 10px sans-serif";
-        const bw = ctx.measureText(a.msg).width + 14;
+        ctx.font = "bold 13px sans-serif";
+        const bw = ctx.measureText(a.msg).width + 16;
         const bx = Math.max(8, Math.min(960 - bw - 8, x - bw / 2));
-        const by = y - 54;
-        drawPixelRect(bx, by, bw, 20, "rgba(15, 23, 42, 0.92)", "#22c55e");
-        ctx.fillStyle = "#ecfdf5";
-        ctx.fillText(a.msg, bx + 7, by + 13);
+        const by = y - 56;
+        drawRoundRect(bx, by - 5, bw, 26, 8, "rgba(15, 23, 42, 0.94)", a.skin);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(a.msg, bx + 8, by + 12);
       }
     }
 
     function tick() {
       frame++;
-      // Random patrol when autoMode is ON
       if (autoMode && frame % 180 === 0) {
         AGENTS.forEach(a => {
           if (a.id === "대표님") return;
-          if (Math.random() > 0.45) {
-            a.tx = a.homeX + (Math.random() * 90 - 45);
-            a.ty = a.homeY + (Math.random() * 50 - 25);
+          if (Math.random() > 0.4) {
+            a.tx = a.homeX + (Math.random() * 80 - 40);
+            a.ty = a.homeY + (Math.random() * 44 - 22);
           } else {
             a.tx = a.homeX;
             a.ty = a.homeY;
           }
         });
       }
-
-      // Move smoothly
       AGENTS.forEach(a => {
         a.x += (a.tx - a.x) * 0.04;
         a.y += (a.ty - a.y) * 0.04;
       });
-
       drawOfficeMap();
       AGENTS.slice().sort((a, b) => a.y - b.y).forEach(drawAgent);
       requestAnimationFrame(tick);
