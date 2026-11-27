@@ -289,6 +289,8 @@
     .pin-input:focus { border-color: var(--neon); }
     .pin-err { color: #f87171; font-size: 12px; margin-top: 8px; min-height: 18px; }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
   <!-- Public Gate Screen -->
@@ -393,9 +395,10 @@
 
       <!-- VIEW 1: PIXEL OFFICE -->
       <section id="view-office" class="sub-panel active">
-        <div class="office-wrap">
-          <div class="office-overlay-badge">DISPATCH PROTOCOL · LIVE PIXEL OFFICE</div>
-          <canvas id="officeCanvas" width="960" height="540"></canvas>
+        <div class="office-wrap" id="office3dWrap" style="height: 520px; background: #e5e7eb;">
+          <div class="office-overlay-badge" style="z-index:20;">🌐 3D LIVE OFFICE · 마우스 드래그로 회전 / 휠로 줌 / 캐릭터 클릭</div>
+          <div id="threeContainer" style="width:100%; height:100%;"></div>
+          <div id="labelsOverlay" style="position:absolute; inset:0; pointer-events:none; overflow:hidden;"></div>
         </div>
 
         <div class="grid-3" style="margin-top:12px;">
@@ -538,298 +541,297 @@
       btn.classList.add("active");
     }
 
-    // ==================== 2D PIXEL ART OFFICE ENGINE ====================
-    const canvas = document.getElementById("officeCanvas");
-    const ctx = canvas.getContext("2d");
-
+    // ==================== 3D METAVERSE OFFICE ENGINE (Three.js) ====================
     const AGENTS = [
-      { id: "대표님", label: "기쁨이(CEO)", role: "기쁨이 · CEO", x: 135, y: 165, homeX: 135, homeY: 165, tx: 135, ty: 165, skin: "#fef08a", hair: "#2563eb", shirt: "#fde047", accent: "#60a5fa", type: "joy", msg: "재밌게 돈 벌어보자!", desc: "💛 기쁨이(CEO) · 전체 방향 지휘 및 최종 승인" },
-      { id: "코다리", label: "슬픔이(코다리)", role: "슬픔이 · 총괄/팩트", x: 365, y: 315, homeX: 365, homeY: 315, tx: 460, ty: 245, skin: "#60a5fa", hair: "#1d4ed8", shirt: "#f8fafc", accent: "#1e3a8a", type: "sadness", msg: "영수증 팩트 체크 중...", desc: "💙 슬픔이(코다리부장) · 꼼꼼한 시장 실사 & 웹앱 설계" },
-      { id: "글쓰기", label: "까칠이(작가)", role: "까칠이 · 글쓰기", x: 575, y: 315, homeX: 575, homeY: 315, tx: 575, ty: 315, skin: "#86efac", hair: "#15803d", shirt: "#22c55e", accent: "#c084fc", type: "disgust", msg: "AI 티 나는 글은 사절!", desc: "💚 까칠이(connect-ai-writer) · 퀄리티 검수 & 사람 말투 원고" },
-      { id: "마케팅", label: "버럭이(마케팅)", role: "버럭이 · 마케팅", x: 815, y: 175, homeX: 815, homeY: 175, tx: 815, ty: 175, skin: "#ef4444", hair: "#f97316", shirt: "#ffffff", accent: "#b91c1c", type: "anger", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(connect-ai-marketer) · 공격적 벤치마킹 & 키워드 감시" },
-      { id: "3D호랑이", label: "불안이(3D모션)", role: "불안이 · 3D/모션", x: 515, y: 155, homeX: 515, homeY: 155, tx: 470, ty: 185, skin: "#fb923c", hair: "#ea580c", shirt: "#fef3c7", accent: "#9a3412", type: "anxiety", msg: "블렌더 3D로 앞서가자!", desc: "🧡 불안이(Blender+Motion) · 3D 호랑이 광고 & 움직이는 짤" },
-      { id: "유튜브PD", label: "소심이(유튜브)", role: "소심이 · 유튜브PD", x: 245, y: 425, homeX: 245, homeY: 425, tx: 290, ty: 425, skin: "#c084fc", hair: "#581c87", shirt: "#a855f7", accent: "#ef4444", type: "fear", msg: "업로드 실수 없게 확인!", desc: "💜 소심이(YouTube PD) · 철만이 & ZeroCost 안전 업로드" }
+      { id: "대표님", team: "<CEO>", label: "기쁨이(대표님)", x: -4, z: -2, homeX: -4, homeZ: -2, tx: -4, tz: -2, skin: 0xfde047, hair: 0x2563eb, suit: 0xfacc15, type: "joy", msg: "매출 도는 자리 가자!", desc: "💛 기쁨이(CEO) · 전체 지휘 및 최종 승인" },
+      { id: "코다리", team: "<총괄팀>", label: "슬픔이(코다리)", x: 0, z: 2, homeX: 0, homeZ: 2, tx: 1.5, tz: 1.0, skin: 0x60a5fa, hair: 0x1d4ed8, suit: 0xf8fafc, type: "sadness", msg: "영수증 팩트 체크 중...", desc: "💙 슬픔이(코다리부장) · 시장 실사 & 웹앱 설계" },
+      { id: "글쓰기", team: "<작가팀>", label: "까칠이(글쓰기)", x: 5, z: -3, homeX: 5, homeZ: -3, tx: 5, tz: -3, skin: 0x86efac, hair: 0x15803d, suit: 0x22c55e, type: "disgust", msg: "AI 티 나는 글 사절!", desc: "💚 까칠이(connect-ai-writer) · 사람 말투 원고" },
+      { id: "마케팅", team: "<홍보팀>", label: "버럭이(마케팅)", x: 6, z: 3, homeX: 6, homeZ: 3, tx: 6, tz: 3, skin: 0xef4444, hair: 0xf97316, suit: 0x1e293b, type: "anger", msg: "떡상 키워드 당장 잡아!", desc: "❤️ 버럭이(connect-ai-marketer) · 벤치마킹 & 감시" },
+      { id: "3D호랑이", team: "<3D모션>", label: "불안이(3D호랑이)", x: -5, z: 4, homeX: -5, homeZ: 4, tx: -3.5, tz: 3, skin: 0xfb923c, hair: 0xea580c, suit: 0xfef3c7, type: "anxiety", msg: "블렌더 3D 렌더링!", desc: "🧡 불안이(Blender+Motion) · 3D 호랑이 광고" },
+      { id: "유튜브PD", team: "<영상팀>", label: "소심이(유튜브)", x: 2, z: -6, homeX: 2, homeZ: -6, tx: 2, tz: -6, skin: 0xc084fc, hair: 0x581c87, suit: 0x9333ea, type: "fear", msg: "업로드 실수 없게 확인!", desc: "💜 소심이(YouTube PD) · 철만이 & ZeroCost" }
     ];
 
-    let frame = 0;
+    let scene, camera, renderer, controls, raycaster, mouse;
+    let agentMeshes = [];
+    let frame3d = 0;
 
-    function drawRoundRect(x, y, w, h, r, fill, stroke) {
-      ctx.beginPath();
-      ctx.roundRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h), r);
-      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); }
-    }
+    function init3DOffice() {
+      const container = document.getElementById("threeContainer");
+      const overlay = document.getElementById("labelsOverlay");
+      if (!container || typeof THREE === "undefined") return;
 
-    function drawDeskWithChair(x, y, w, chairColor, monitorColor1, monitorColor2) {
-      // Chair behind desk
-      drawRoundRect(x + w/2 - 14, y + 38, 28, 16, 5, chairColor, "#1e293b");
-      // Desk shadow & body
-      drawRoundRect(x, y + 6, w, 36, 6, "#d97706", "#78350f");
-      drawRoundRect(x + 2, y + 6, w - 4, 14, 4, "#f59e0b"); // top highlight
-      // Dual Monitors
-      drawRoundRect(x + 14, y - 10, 36, 22, 4, "#0f172a", "#334155");
-      ctx.fillStyle = monitorColor1; ctx.fillRect(x + 17, y - 7, 30, 16);
-      // Monitor code lines
-      ctx.fillStyle = "#ffffff"; ctx.fillRect(x + 20, y - 4, 14, 2); ctx.fillRect(x + 20, y, 22, 2);
-      if (monitorColor2) {
-        drawRoundRect(x + w - 50, y - 10, 36, 22, 4, "#0f172a", "#334155");
-        ctx.fillStyle = monitorColor2; ctx.fillRect(x + w - 47, y - 7, 30, 16);
-        ctx.fillStyle = "#ffffff"; ctx.fillRect(x + w - 44, y - 3, 18, 2);
+      const w = container.clientWidth || 900;
+      const h = container.clientHeight || 520;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xdbeafe);
+      scene.fog = new THREE.Fog(0xdbeafe, 24, 52);
+
+      camera = new THREE.PerspectiveCamera(48, w / h, 0.1, 100);
+      camera.position.set(0, 9, 14);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      container.innerHTML = "";
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.maxPolarAngle = Math.PI / 2.15;
+      controls.minDistance = 5;
+      controls.maxDistance = 26;
+      controls.target.set(0, 1, 0);
+
+      // Lights
+      const hemi = new THREE.HemisphereLight(0xffffff, 0x94a3b8, 0.9);
+      scene.add(hemi);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.85);
+      dir.position.set(8, 16, 10);
+      dir.castShadow = true;
+      dir.shadow.mapSize.width = 1024;
+      dir.shadow.mapSize.height = 1024;
+      scene.add(dir);
+
+      // Herringbone Wood / Light Studio Floor
+      const floorGeo = new THREE.PlaneGeometry(32, 26);
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x8d7b68, roughness: 0.75 });
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);
+
+      // Subtle floor grid tiles
+      const grid = new THREE.GridHelper(32, 32, 0x6b5b4b, 0x7a6a58);
+      grid.position.y = 0.01;
+      scene.add(grid);
+
+      // White Walls & Skylight Ceiling Beams (like modern metaverse hall!)
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.8 });
+      const backWall = new THREE.Mesh(new THREE.BoxGeometry(32, 6, 0.4), wallMat);
+      backWall.position.set(0, 3, -12);
+      scene.add(backWall);
+
+      const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 6, 26), wallMat);
+      leftWall.position.set(-15, 3, 0);
+      scene.add(leftWall);
+
+      const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 6, 26), wallMat);
+      rightWall.position.set(15, 3, 0);
+      scene.add(rightWall);
+
+      // Art Frames on Back Wall
+      const artColors = [0x38bdf8, 0x22c55e, 0xfbbf24, 0xf472b6, 0xa855f7];
+      for (let i = -2; i <= 2; i++) {
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.8, 0.1), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+        frame.position.set(i * 5.2, 3.3, -11.75);
+        scene.add(frame);
+        const canvasArt = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.5, 0.12), new THREE.MeshStandardMaterial({ color: artColors[i + 2] }));
+        canvasArt.position.set(i * 5.2, 3.3, -11.73);
+        scene.add(canvasArt);
       }
-      // Keyboard & Coffee Mug
-      drawRoundRect(x + w/2 - 16, y + 22, 32, 8, 2, "#334155");
-      drawRoundRect(x + w - 18, y + 20, 9, 10, 2, "#ffffff", "#64748b");
-    }
 
-    function drawBookshelf(x, y, w, h) {
-      drawRoundRect(x, y, w, h, 4, "#78350f", "#451a03");
-      drawRoundRect(x + 4, y + 4, w - 8, h/2 - 6, 2, "#451a03");
-      drawRoundRect(x + 4, y + h/2 + 2, w - 8, h/2 - 6, 2, "#451a03");
-      const bookColors = ["#ef4444", "#3b82f6", "#22c55e", "#eab308", "#a855f7", "#ec4899", "#06b6d4"];
-      for (let bx = x + 7; bx < x + w - 14; bx += 11) {
-        ctx.fillStyle = bookColors[(bx * 3) % bookColors.length];
-        ctx.fillRect(bx, y + 6, 8, h/2 - 9);
-        ctx.fillStyle = bookColors[(bx * 7 + 2) % bookColors.length];
-        ctx.fillRect(bx, y + h/2 + 4, 8, h/2 - 9);
+      // Skylight Ceiling Grid
+      const beamMat = new THREE.MeshStandardMaterial({ color: 0x475569 });
+      for (let bx = -12; bx <= 12; bx += 6) {
+        const beam = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.3, 24), beamMat);
+        beam.position.set(bx, 6, 0);
+        scene.add(beam);
       }
-    }
-
-    function drawPlant(x, y) {
-      drawRoundRect(x, y + 14, 18, 14, 4, "#b45309", "#451a03");
-      ctx.fillStyle = "#15803d"; ctx.beginPath(); ctx.arc(x + 9, y + 8, 12, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(x + 5, y + 4, 7, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#86efac"; ctx.beginPath(); ctx.arc(x + 12, y + 3, 5, 0, Math.PI * 2); ctx.fill();
-    }
-
-    function drawOfficeMap() {
-      // Crisp Bright White Tile Floor
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 960, 540);
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
-      ctx.lineWidth = 1;
-      for (let x = 0; x < 960; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 540); ctx.stroke(); }
-      for (let y = 0; y < 540; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(960, y); ctx.stroke(); }
-
-      // Panoramic City Skyline Windows (Top Wall)
-      drawRoundRect(0, 0, 960, 64, 0, "#334155");
-      for (let wx = 26; wx < 910; wx += 188) {
-        // Sky gradient
-        const grad = ctx.createLinearGradient(wx, 8, wx, 54);
-        grad.addColorStop(0, "#7dd3fc");
-        grad.addColorStop(1, "#fbcfe8");
-        drawRoundRect(wx, 8, 160, 46, 6, grad, "#0f172a");
-        // City buildings silhouette inside window
-        ctx.fillStyle = "rgba(30, 41, 59, 0.35)";
-        ctx.fillRect(wx + 12, 30, 22, 24);
-        ctx.fillRect(wx + 38, 20, 28, 34);
-        ctx.fillRect(wx + 72, 26, 20, 28);
-        ctx.fillRect(wx + 98, 16, 30, 38);
-        ctx.fillRect(wx + 132, 32, 18, 22);
-        // Window shine
-        ctx.fillStyle = "rgba(255,255,255,0.4)";
-        ctx.fillRect(wx + 10, 12, 12, 38);
+      for (let bz = -10; bz <= 10; bz += 5) {
+        const beam = new THREE.Mesh(new THREE.BoxGeometry(30, 0.3, 0.35), beamMat);
+        beam.position.set(0, 6, bz);
+        scene.add(beam);
       }
 
-      // ===== 1. CEO 기쁨실 (Top Left) =====
-      drawRoundRect(18, 72, 232, 184, 12, "#fffbeb", "#f59e0b");
-      // Rug
-      drawRoundRect(46, 114, 176, 124, 14, "#fef3c7");
-      drawBookshelf(28, 84, 72, 38);
-      // Whiteboard with chart
-      drawRoundRect(112, 80, 74, 34, 4, "#ffffff", "#94a3b8");
-      ctx.strokeStyle = "#22c55e"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(120, 106); ctx.lineTo(138, 96); ctx.lineTo(154, 100); ctx.lineTo(176, 86); ctx.stroke();
-      drawRoundRect(24, 76, 108, 22, 6, "#111827");
-      ctx.fillStyle = "#fde047"; ctx.font = "bold 13px sans-serif"; ctx.fillText("💛 CEO 기쁨실", 32, 92);
-      drawDeskWithChair(74, 134, 120, "#f59e0b", "#38bdf8", "#fbbf24");
+      // Helper: White Conference Table + Chairs + Laptops
+      function addTableGroup(tx, tz) {
+        const tableTop = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.15, 2.2), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 }));
+        tableTop.position.set(tx, 0.9, tz);
+        tableTop.castShadow = true;
+        tableTop.receiveShadow = true;
+        scene.add(tableTop);
 
-      // ===== 2. 중앙 아이디어 회의실 (Top Center) =====
-      drawRoundRect(264, 72, 424, 184, 12, "#f8fafc", "#64748b");
-      // Carpet
-      drawRoundRect(310, 118, 330, 124, 20, "#e2e8f0");
-      // Whiteboard + Core Memory Orbs
-      drawRoundRect(410, 78, 130, 36, 4, "#ffffff", "#475569");
-      ["#fde047", "#60a5fa", "#86efac", "#fb923c", "#c084fc"].forEach((c, idx) => {
-        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(430 + idx * 22, 96, 8, 0, Math.PI * 2); ctx.fill();
-      });
-      drawRoundRect(274, 76, 130, 22, 6, "#111827");
-      ctx.fillStyle = "#4ade80"; ctx.fillText("✨ 아이디어 회의실", 282, 92);
-      // Conference Table + chairs around
-      for (let cx of [410, 476, 542]) {
-        drawRoundRect(cx - 12, 124, 24, 14, 4, "#64748b");
-        drawRoundRect(cx - 12, 206, 24, 14, 4, "#64748b");
-      }
-      ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(476, 172, 102, 42, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = "#475569"; ctx.lineWidth = 3; ctx.stroke();
-      // Laptop & papers on table
-      drawRoundRect(454, 160, 44, 22, 3, "#cbd5e1", "#64748b");
-
-      // ===== 3. 버럭 마케팅실 (Top Right) =====
-      drawRoundRect(702, 72, 240, 184, 12, "#fff1f2", "#ef4444");
-      drawRoundRect(722, 116, 200, 124, 14, "#ffe4e6");
-      drawBookshelf(856, 82, 74, 38);
-      drawRoundRect(710, 76, 130, 22, 6, "#111827");
-      ctx.fillStyle = "#fca5a5"; ctx.fillText("❤️ 버럭 마케팅실", 718, 92);
-      drawDeskWithChair(760, 136, 124, "#ef4444", "#22c55e", "#f97316");
-
-      // ===== Center Workstations (슬픔이 & 까칠이) =====
-      drawDeskWithChair(300, 286, 134, "#3b82f6", "#38bdf8", "#22c55e");
-      drawDeskWithChair(514, 286, 134, "#10b981", "#a855f7", "#4ade80");
-      // Trash / Recycling Bins
-      drawRoundRect(458, 294, 18, 22, 3, "#3b82f6", "#1e3a8a");
-      drawRoundRect(480, 294, 18, 22, 3, "#22c55e", "#14532d");
-
-      // ===== 4. 소심 유튜브 스튜디오 (Bottom Left) =====
-      drawRoundRect(18, 342, 336, 182, 12, "#faf5ff", "#a855f7");
-      drawRoundRect(34, 382, 304, 128, 14, "#f3e8ff");
-      drawRoundRect(26, 348, 152, 22, 6, "#111827");
-      ctx.fillStyle = "#d8b4fe"; ctx.fillText("💜 소심 유튜브 스튜디오", 34, 364);
-      // Cozy Sofa + Cushions + Coffee Table
-      drawRoundRect(40, 424, 112, 46, 10, "#9333ea", "#581c87");
-      drawRoundRect(48, 430, 26, 22, 5, "#f472b6"); // pink cushion
-      drawRoundRect(118, 430, 26, 22, 5, "#fde047"); // yellow cushion
-      drawRoundRect(68, 480, 56, 24, 6, "#f8fafc", "#94a3b8"); // coffee table
-      // Editing Desk
-      drawDeskWithChair(190, 396, 126, "#a855f7", "#ec4899", "#38bdf8");
-
-      // ===== 5. 블렌더 3D & 카페 휴게실 (Bottom Right) =====
-      drawRoundRect(676, 342, 266, 182, 12, "#fff7ed", "#f97316");
-      drawRoundRect(692, 382, 234, 128, 14, "#ffedd5");
-      drawRoundRect(684, 348, 154, 22, 6, "#111827");
-      ctx.fillStyle = "#fdba74"; ctx.fillText("🧡 블렌더 3D & 카페", 692, 364);
-      // Coffee Bar & Espresso Machine
-      drawRoundRect(700, 390, 120, 36, 6, "#92400e", "#451a03");
-      drawRoundRect(714, 382, 28, 22, 4, "#94a3b8", "#334155"); // espresso machine
-      drawRoundRect(752, 386, 16, 16, 3, "#ef4444"); // mug warmer
-      // Bookshelves & Beanbags
-      drawBookshelf(836, 386, 86, 46);
-      ctx.fillStyle = "#fb923c"; ctx.beginPath(); ctx.arc(736, 470, 20, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#38bdf8"; ctx.beginPath(); ctx.arc(792, 470, 20, 0, Math.PI * 2); ctx.fill();
-      drawBookshelf(836, 444, 86, 56);
-
-      // Cute Plants around corridor
-      for (let [px, py] of [[254, 256], [692, 256], [30, 296], [912, 296]]) {
-        drawPlant(px, py);
-      }
-    }
-
-    function drawAgent(a) {
-      const bob = Math.sin(frame * 0.11 + a.homeX) * 2.5;
-      const x = Math.round(a.x);
-      const y = Math.round(a.y + bob);
-
-      // Shadow
-      ctx.fillStyle = "rgba(0,0,0,0.2)";
-      ctx.beginPath(); ctx.ellipse(x, a.y + 22, 16, 6, 0, 0, Math.PI * 2); ctx.fill();
-
-      // Cute Chibi Body (Slightly larger & rounder)
-      drawRoundRect(x - 12, y - 2, 24, 22, 8, a.shirt, "#1e293b");
-
-      if (a.type === "anger") {
-        drawRoundRect(x - 15, y - 28, 30, 25, 6, a.skin, "#1e293b");
-        ctx.fillStyle = "#f97316";
-        ctx.beginPath(); ctx.moveTo(x - 10, y - 28); ctx.lineTo(x - 4, y - 40); ctx.lineTo(x + 2, y - 30); ctx.lineTo(x + 8, y - 41); ctx.lineTo(x + 12, y - 28); ctx.fill();
-        ctx.fillStyle = a.accent; ctx.fillRect(x - 2, y + 1, 5, 13);
-      } else {
-        ctx.fillStyle = a.skin; ctx.beginPath(); ctx.arc(x, y - 16, 15, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 2; ctx.stroke();
-
-        ctx.fillStyle = a.hair;
-        if (a.type === "joy") {
-          ctx.beginPath(); ctx.arc(x, y - 22, 15, Math.PI, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(x - 11, y - 17, 6, 0, Math.PI * 2); ctx.fill();
-        } else if (a.type === "sadness") {
-          ctx.beginPath(); ctx.arc(x, y - 21, 15, Math.PI * 0.9, Math.PI * 2.1); ctx.fill();
-          ctx.strokeStyle = "#1e3a8a"; ctx.lineWidth = 2.2;
-          ctx.beginPath(); ctx.arc(x - 6, y - 15, 5, 0, Math.PI * 2); ctx.stroke();
-          ctx.beginPath(); ctx.arc(x + 6, y - 15, 5, 0, Math.PI * 2); ctx.stroke();
-        } else if (a.type === "disgust") {
-          ctx.beginPath(); ctx.arc(x, y - 22, 15, Math.PI, Math.PI * 2); ctx.fill();
-          drawRoundRect(x - 10, y - 3, 20, 6, 3, a.accent);
-        } else if (a.type === "anxiety") {
-          ctx.beginPath(); ctx.moveTo(x - 12, y - 25); ctx.lineTo(x - 7, y - 39); ctx.lineTo(x, y - 30); ctx.lineTo(x + 7, y - 40); ctx.lineTo(x + 13, y - 25); ctx.fill();
-        } else if (a.type === "fear") {
-          ctx.beginPath(); ctx.arc(x, y - 33, 3.5, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = a.accent; ctx.fillRect(x - 6, y - 2, 12, 5);
+        const legMat = new THREE.MeshStandardMaterial({ color: 0x334155 });
+        for (let lx of [-1.8, 1.8]) {
+          for (let lz of [-0.8, 0.8]) {
+            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9), legMat);
+            leg.position.set(tx + lx, 0.45, tz + lz);
+            scene.add(leg);
+          }
+        }
+        // Laptops on table
+        for (let ox of [-1.1, 1.1]) {
+          const lap = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, 0.45), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+          lap.position.set(tx + ox, 1.0, tz + 0.3);
+          scene.add(lap);
+          const scr = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.4, 0.04), new THREE.MeshStandardMaterial({ color: 0x0f172a, emissive: 0x1d4ed8, emissiveIntensity: 0.4 }));
+          scr.position.set(tx + ox, 1.2, tz + 0.5);
+          scr.rotation.x = -0.25;
+          scene.add(scr);
+        }
+        // Black Office Chairs
+        const chairMat = new THREE.MeshStandardMaterial({ color: 0x111827 });
+        for (let cx of [-1.1, 1.1]) {
+          for (let cz of [-1.45, 1.45]) {
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.1, 0.65), chairMat);
+            seat.position.set(tx + cx, 0.55, tz + cz);
+            scene.add(seat);
+            const back = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.7, 0.1), chairMat);
+            back.position.set(tx + cx, 0.9, tz + cz + (cz > 0 ? 0.3 : -0.3));
+            scene.add(back);
+          }
         }
       }
 
-      // Sparkly Eyes
-      ctx.fillStyle = "#0f172a";
-      ctx.beginPath(); ctx.arc(x - 6, y - 15, 2.5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(x + 6, y - 15, 2.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x - 7, y - 16, 1.8, 1.8);
-      ctx.fillRect(x + 5, y - 16, 1.8, 1.8);
+      addTableGroup(-4.5, -2.5);
+      addTableGroup(5.0, -3.0);
+      addTableGroup(-4.5, 4.0);
+      addTableGroup(5.5, 3.0);
 
-      // Mouth
-      ctx.strokeStyle = "#0f172a"; ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      if (a.type === "sadness") ctx.arc(x, y - 8, 3.5, Math.PI * 1.1, Math.PI * 1.9);
-      else ctx.arc(x, y - 11, 4, 0.1 * Math.PI, 0.9 * Math.PI);
-      ctx.stroke();
+      // Build 3D Emotion Characters + DOM Floating Labels
+      overlay.innerHTML = "";
+      agentMeshes = AGENTS.map((ag) => {
+        const group = new THREE.Group();
+        // Torso
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.38, 0.95, 16), new THREE.MeshStandardMaterial({ color: ag.suit }));
+        torso.position.y = 0.85;
+        torso.castShadow = true;
+        group.add(torso);
 
-      // Big Nameplate
-      ctx.font = "bold 13px sans-serif";
-      const tw = ctx.measureText(a.label).width + 14;
-      drawRoundRect(x - tw / 2, a.y + 24, tw, 22, 6, "#0f172a");
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(a.label, x - tw / 2 + 7, a.y + 39);
+        // Legs
+        const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+        const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.1, 0.55, 10), legMat);
+        legL.position.set(-0.15, 0.28, 0);
+        const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.1, 0.55, 10), legMat);
+        legR.position.set(0.15, 0.28, 0);
+        group.add(legL, legR);
 
-      // Big Speech Bubble
-      if (a.msg) {
-        ctx.font = "bold 13px sans-serif";
-        const bw = ctx.measureText(a.msg).width + 18;
-        const bx = Math.max(8, Math.min(960 - bw - 8, x - bw / 2));
-        const by = y - 66;
-        drawRoundRect(bx, by, bw, 26, 8, "rgba(15, 23, 42, 0.95)", a.skin);
-        ctx.fillStyle = "#ffffff";
-        ctx.fillText(a.msg, bx + 9, by + 17);
-      }
+        // Head (Round cute 3D)
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 20, 20), new THREE.MeshStandardMaterial({ color: ag.skin }));
+        head.position.y = 1.65;
+        head.castShadow = true;
+        group.add(head);
+
+        // Hair cap
+        const hair = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.55), new THREE.MeshStandardMaterial({ color: ag.hair }));
+        hair.position.y = 1.72;
+        group.add(hair);
+
+        // Selection ring under feet
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.48, 0.58, 24), new THREE.MeshBasicMaterial({ color: ag.skin, side: THREE.DoubleSide }));
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = 0.03;
+        group.add(ring);
+
+        group.position.set(ag.x, 0, ag.z);
+        group.userData = { agentId: ag.id };
+        scene.add(group);
+
+        // Floating HUD Nameplate + Speech Bubble
+        const lbl = document.createElement("div");
+        lbl.style.cssText = "position:absolute; transform:translate(-50%,-100%); text-align:center; pointer-events:auto; cursor:pointer;";
+        lbl.innerHTML = `
+          <div style="background:rgba(15,23,42,0.9); border:1px solid #22c55e; color:#4ade80; font-size:11px; font-weight:800; padding:2px 7px; border-radius:6px; white-space:nowrap;">${ag.team} ${ag.label}</div>
+          <div class="ag-msg" style="background:rgba(255,255,255,0.95); color:#111827; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; margin-top:3px; box-shadow:0 2px 6px rgba(0,0,0,0.2); white-space:nowrap;">${ag.msg}</div>
+        `;
+        lbl.onclick = () => select3DAgent(ag.id);
+        overlay.appendChild(lbl);
+
+        return { ag, group, legL, legR, lbl };
+      });
+
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+      renderer.domElement.addEventListener("click", (e) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const hits = raycaster.intersectObjects(agentMeshes.map(m => m.group), true);
+        if (hits.length > 0) {
+          let obj = hits[0].object;
+          while (obj.parent && !obj.userData.agentId) obj = obj.parent;
+          if (obj.userData.agentId) select3DAgent(obj.userData.agentId);
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (!container || !renderer) return;
+        const nw = container.clientWidth;
+        const nh = container.clientHeight;
+        if (nw > 0 && nh > 0) {
+          camera.aspect = nw / nh;
+          camera.updateProjectionMatrix();
+          renderer.setSize(nw, nh);
+        }
+      });
+    }
+
+    function select3DAgent(id) {
+      const ag = AGENTS.find(a => a.id === id);
+      if (!ag) return;
+      document.getElementById("selName").textContent = `${ag.team} ${ag.label}`;
+      document.getElementById("selDesc").textContent = ag.desc;
+      document.getElementById("statusMsg").textContent = `${ag.label} 선택됨 — "${ag.msg}"`;
     }
 
     function tick() {
-      frame++;
-      if (autoMode && frame % 180 === 0) {
+      frame3d++;
+      if (!renderer || !scene || !camera) {
+        init3DOffice();
+      }
+      if (autoMode && frame3d % 180 === 0) {
         AGENTS.forEach(a => {
           if (a.id === "대표님") return;
-          if (Math.random() > 0.4) {
-            a.tx = a.homeX + (Math.random() * 80 - 40);
-            a.ty = a.homeY + (Math.random() * 44 - 22);
+          if (Math.random() > 0.35) {
+            a.tx = a.homeX + (Math.random() * 4 - 2);
+            a.tz = a.homeZ + (Math.random() * 3 - 1.5);
           } else {
-            a.tx = a.homeX;
-            a.ty = a.homeY;
+            a.tx = a.homeX; a.tz = a.homeZ;
           }
         });
       }
-      AGENTS.forEach(a => {
-        a.x += (a.tx - a.x) * 0.04;
-        a.y += (a.ty - a.y) * 0.04;
+
+      const container = document.getElementById("threeContainer");
+      const w = container ? container.clientWidth : 900;
+      const h = container ? container.clientHeight : 520;
+
+      agentMeshes.forEach(({ ag, group, legL, legR, lbl }) => {
+        const dx = ag.tx - ag.x;
+        const dz = ag.tz - ag.z;
+        const dist = Math.hypot(dx, dz);
+        if (dist > 0.05) {
+          ag.x += dx * 0.03;
+          ag.z += dz * 0.03;
+          group.rotation.y = Math.atan2(dx, dz);
+          legL.rotation.x = Math.sin(frame3d * 0.2) * 0.45;
+          legR.rotation.x = -Math.sin(frame3d * 0.2) * 0.45;
+        } else {
+          legL.rotation.x = 0; legR.rotation.x = 0;
+        }
+        group.position.set(ag.x, 0, ag.z);
+
+        // Update 2D overlay label position
+        if (camera && w > 0) {
+          const pos = new THREE.Vector3(ag.x, 2.35, ag.z);
+          pos.project(camera);
+          if (pos.z < 1) {
+            lbl.style.display = "block";
+            lbl.style.left = ((pos.x * 0.5 + 0.5) * w) + "px";
+            lbl.style.top = ((-(pos.y * 0.5) + 0.5) * h) + "px";
+            lbl.querySelector(".ag-msg").textContent = ag.msg;
+          } else {
+            lbl.style.display = "none";
+          }
+        }
       });
-      drawOfficeMap();
-      AGENTS.slice().sort((a, b) => a.y - b.y).forEach(drawAgent);
+
+      if (controls) controls.update();
+      if (renderer && scene && camera) renderer.render(scene, camera);
       requestAnimationFrame(tick);
     }
-
-    canvas.addEventListener("click", (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = 960 / rect.width;
-      const scaleY = 540 / rect.height;
-      const cx = (e.clientX - rect.left) * scaleX;
-      const cy = (e.clientY - rect.top) * scaleY;
-
-      let closest = null;
-      let minDist = 60;
-      AGENTS.forEach(a => {
-        const d = Math.hypot(cx - a.x, cy - a.y);
-        if (d < minDist) { minDist = d; closest = a; }
-      });
-
-      if (closest) {
-        document.getElementById("selName").textContent = `${closest.id} (${closest.label})`;
-        document.getElementById("selDesc").textContent = closest.desc;
-        document.getElementById("statusMsg").textContent = `${closest.id} 선택됨 — "${closest.msg}"`;
-      }
-    });
 
     function dispatchCommand() {
       const input = document.getElementById("cmdInput");
@@ -850,7 +852,7 @@
       const ag = AGENTS.find(a => a.id === targetId);
       if (ag) {
         ag.msg = txt.slice(0, 14) + (txt.length > 14 ? "..." : "");
-        ag.tx = 475; ag.ty = 175; // 회의실 테이블로 집결!
+        ag.tx = 0; ag.tz = 0; // 회의실 테이블로 집결!
       }
 
       input.value = "";
