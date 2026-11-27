@@ -560,76 +560,155 @@
       if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); }
     }
 
+    function drawDeskWithChair(x, y, w, chairColor, monitorColor1, monitorColor2) {
+      // Chair behind desk
+      drawRoundRect(x + w/2 - 14, y + 38, 28, 16, 5, chairColor, "#1e293b");
+      // Desk shadow & body
+      drawRoundRect(x, y + 6, w, 36, 6, "#d97706", "#78350f");
+      drawRoundRect(x + 2, y + 6, w - 4, 14, 4, "#f59e0b"); // top highlight
+      // Dual Monitors
+      drawRoundRect(x + 14, y - 10, 36, 22, 4, "#0f172a", "#334155");
+      ctx.fillStyle = monitorColor1; ctx.fillRect(x + 17, y - 7, 30, 16);
+      // Monitor code lines
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(x + 20, y - 4, 14, 2); ctx.fillRect(x + 20, y, 22, 2);
+      if (monitorColor2) {
+        drawRoundRect(x + w - 50, y - 10, 36, 22, 4, "#0f172a", "#334155");
+        ctx.fillStyle = monitorColor2; ctx.fillRect(x + w - 47, y - 7, 30, 16);
+        ctx.fillStyle = "#ffffff"; ctx.fillRect(x + w - 44, y - 3, 18, 2);
+      }
+      // Keyboard & Coffee Mug
+      drawRoundRect(x + w/2 - 16, y + 22, 32, 8, 2, "#334155");
+      drawRoundRect(x + w - 18, y + 20, 9, 10, 2, "#ffffff", "#64748b");
+    }
+
+    function drawBookshelf(x, y, w, h) {
+      drawRoundRect(x, y, w, h, 4, "#78350f", "#451a03");
+      drawRoundRect(x + 4, y + 4, w - 8, h/2 - 6, 2, "#451a03");
+      drawRoundRect(x + 4, y + h/2 + 2, w - 8, h/2 - 6, 2, "#451a03");
+      const bookColors = ["#ef4444", "#3b82f6", "#22c55e", "#eab308", "#a855f7", "#ec4899", "#06b6d4"];
+      for (let bx = x + 7; bx < x + w - 14; bx += 11) {
+        ctx.fillStyle = bookColors[(bx * 3) % bookColors.length];
+        ctx.fillRect(bx, y + 6, 8, h/2 - 9);
+        ctx.fillStyle = bookColors[(bx * 7 + 2) % bookColors.length];
+        ctx.fillRect(bx, y + h/2 + 4, 8, h/2 - 9);
+      }
+    }
+
+    function drawPlant(x, y) {
+      drawRoundRect(x, y + 14, 18, 14, 4, "#b45309", "#451a03");
+      ctx.fillStyle = "#15803d"; ctx.beginPath(); ctx.arc(x + 9, y + 8, 12, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(x + 5, y + 4, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#86efac"; ctx.beginPath(); ctx.arc(x + 12, y + 3, 5, 0, Math.PI * 2); ctx.fill();
+    }
+
     function drawOfficeMap() {
-      // Warm Wood & Cozy Studio Floor
+      // Crisp Bright White Tile Floor
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, 960, 540);
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.18)";
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < 960; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 540); ctx.stroke(); }
-      for (let y = 0; y < 540; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(960, y); ctx.stroke(); }
+      for (let x = 0; x < 960; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 540); ctx.stroke(); }
+      for (let y = 0; y < 540; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(960, y); ctx.stroke(); }
 
-      // Top Panoramic Window Wall
-      drawRoundRect(0, 0, 960, 58, 0, "#1e293b");
-      for (let wx = 36; wx < 910; wx += 184) {
-        drawRoundRect(wx, 8, 146, 42, 6, "#bae6fd", "#0f172a");
-        ctx.fillStyle = "rgba(255,255,255,0.45)";
-        ctx.fillRect(wx + 12, 12, 24, 34);
-        ctx.fillRect(wx + 44, 12, 10, 34);
+      // Panoramic City Skyline Windows (Top Wall)
+      drawRoundRect(0, 0, 960, 64, 0, "#334155");
+      for (let wx = 26; wx < 910; wx += 188) {
+        // Sky gradient
+        const grad = ctx.createLinearGradient(wx, 8, wx, 54);
+        grad.addColorStop(0, "#7dd3fc");
+        grad.addColorStop(1, "#fbcfe8");
+        drawRoundRect(wx, 8, 160, 46, 6, grad, "#0f172a");
+        // City buildings silhouette inside window
+        ctx.fillStyle = "rgba(30, 41, 59, 0.35)";
+        ctx.fillRect(wx + 12, 30, 22, 24);
+        ctx.fillRect(wx + 38, 20, 28, 34);
+        ctx.fillRect(wx + 72, 26, 20, 28);
+        ctx.fillRect(wx + 98, 16, 30, 38);
+        ctx.fillRect(wx + 132, 32, 18, 22);
+        // Window shine
+        ctx.fillStyle = "rgba(255,255,255,0.4)";
+        ctx.fillRect(wx + 10, 12, 12, 38);
       }
 
-      // Room 1: CEO JOY Room (Warm Cream)
-      drawRoundRect(22, 70, 224, 178, 12, "#fef9c3", "#d97706");
-      drawRoundRect(30, 76, 102, 20, 6, "#111827");
-      ctx.fillStyle = "#fde047"; ctx.font = "bold 13px sans-serif"; ctx.fillText("💛 CEO 기쁨실", 38, 90);
-      drawRoundRect(74, 122, 120, 44, 8, "#b45309", "#78350f");
-      drawRoundRect(114, 110, 40, 24, 4, "#1e293b", "#0f172a");
+      // ===== 1. CEO 기쁨실 (Top Left) =====
+      drawRoundRect(18, 72, 232, 184, 12, "#fffbeb", "#f59e0b");
+      // Rug
+      drawRoundRect(46, 114, 176, 124, 14, "#fef3c7");
+      drawBookshelf(28, 84, 72, 38);
+      // Whiteboard with chart
+      drawRoundRect(112, 80, 74, 34, 4, "#ffffff", "#94a3b8");
+      ctx.strokeStyle = "#22c55e"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(120, 106); ctx.lineTo(138, 96); ctx.lineTo(154, 100); ctx.lineTo(176, 86); ctx.stroke();
+      drawRoundRect(24, 76, 108, 22, 6, "#111827");
+      ctx.fillStyle = "#fde047"; ctx.font = "bold 13px sans-serif"; ctx.fillText("💛 CEO 기쁨실", 32, 92);
+      drawDeskWithChair(74, 134, 120, "#f59e0b", "#38bdf8", "#fbbf24");
 
-      // Room 2: Core Memory / Meeting Hub (Soft Mint-White)
-      drawRoundRect(268, 70, 416, 178, 12, "#f1f5f9", "#64748b");
-      drawRoundRect(278, 76, 148, 20, 6, "#111827");
-      ctx.fillStyle = "#4ade80"; ctx.fillText("✨ 아이디어 회의실", 288, 90);
-      // Colorful Memory Orbs on wall
+      // ===== 2. 중앙 아이디어 회의실 (Top Center) =====
+      drawRoundRect(264, 72, 424, 184, 12, "#f8fafc", "#64748b");
+      // Carpet
+      drawRoundRect(310, 118, 330, 124, 20, "#e2e8f0");
+      // Whiteboard + Core Memory Orbs
+      drawRoundRect(410, 78, 130, 36, 4, "#ffffff", "#475569");
       ["#fde047", "#60a5fa", "#86efac", "#fb923c", "#c084fc"].forEach((c, idx) => {
-        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(540 + idx * 24, 86, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(430 + idx * 22, 96, 8, 0, Math.PI * 2); ctx.fill();
       });
-      // Meeting Table
-      ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(476, 166, 92, 46, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 3; ctx.stroke();
-
-      // Room 3: Marketing Radar (Soft Coral)
-      drawRoundRect(706, 70, 232, 178, 12, "#fee2e2", "#ef4444");
-      drawRoundRect(714, 76, 122, 20, 6, "#111827");
-      ctx.fillStyle = "#fca5a5"; ctx.fillText("❤️ 버럭 마케팅실", 722, 90);
-      drawRoundRect(758, 122, 118, 42, 8, "#57534e", "#292524");
-      drawRoundRect(796, 112, 42, 22, 4, "#22c55e", "#052e16");
-
-      // Center Desks (Sadness & Disgust)
-      for (let dx of [305, 520]) {
-        drawRoundRect(dx, 286, 130, 48, 8, "#cbd5e1", "#475569");
-        drawRoundRect(dx + 22, 274, 36, 22, 4, "#38bdf8", "#0f172a");
-        drawRoundRect(dx + 72, 274, 36, 22, 4, "#4ade80", "#0f172a");
+      drawRoundRect(274, 76, 130, 22, 6, "#111827");
+      ctx.fillStyle = "#4ade80"; ctx.fillText("✨ 아이디어 회의실", 282, 92);
+      // Conference Table + chairs around
+      for (let cx of [410, 476, 542]) {
+        drawRoundRect(cx - 12, 124, 24, 14, 4, "#64748b");
+        drawRoundRect(cx - 12, 206, 24, 14, 4, "#64748b");
       }
+      ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(476, 172, 102, 42, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#475569"; ctx.lineWidth = 3; ctx.stroke();
+      // Laptop & papers on table
+      drawRoundRect(454, 160, 44, 22, 3, "#cbd5e1", "#64748b");
 
-      // Bottom Left: Video Studio (Soft Lavender)
-      drawRoundRect(22, 342, 326, 178, 12, "#f3e8ff", "#9333ea");
-      drawRoundRect(30, 348, 135, 20, 6, "#111827");
-      ctx.fillStyle = "#d8b4fe"; ctx.fillText("💜 소심 유튜브 스튜디오", 38, 362);
-      drawRoundRect(46, 430, 100, 46, 10, "#a855f7", "#581c87"); // cozy sofa
-      drawRoundRect(188, 386, 116, 40, 8, "#78350f", "#451a03");
+      // ===== 3. 버럭 마케팅실 (Top Right) =====
+      drawRoundRect(702, 72, 240, 184, 12, "#fff1f2", "#ef4444");
+      drawRoundRect(722, 116, 200, 124, 14, "#ffe4e6");
+      drawBookshelf(856, 82, 74, 38);
+      drawRoundRect(710, 76, 130, 22, 6, "#111827");
+      ctx.fillStyle = "#fca5a5"; ctx.fillText("❤️ 버럭 마케팅실", 718, 92);
+      drawDeskWithChair(760, 136, 124, "#ef4444", "#22c55e", "#f97316");
 
-      // Bottom Right: Cozy Cafe & 3D Archive
-      drawRoundRect(682, 342, 256, 178, 12, "#ffedd5", "#ea580c");
-      drawRoundRect(690, 348, 145, 20, 6, "#111827");
-      ctx.fillStyle = "#fdba74"; ctx.fillText("🧡 블렌더 3D & 카페", 698, 362);
-      drawRoundRect(712, 392, 196, 30, 6, "#b45309", "#451a03");
-      drawRoundRect(712, 448, 196, 30, 6, "#b45309", "#451a03");
+      // ===== Center Workstations (슬픔이 & 까칠이) =====
+      drawDeskWithChair(300, 286, 134, "#3b82f6", "#38bdf8", "#22c55e");
+      drawDeskWithChair(514, 286, 134, "#10b981", "#a855f7", "#4ade80");
+      // Trash / Recycling Bins
+      drawRoundRect(458, 294, 18, 22, 3, "#3b82f6", "#1e3a8a");
+      drawRoundRect(480, 294, 18, 22, 3, "#22c55e", "#14532d");
 
-      // Cute Potted Plants
-      for (let [px, py] of [[254, 258], [692, 258], [38, 312], [906, 312]]) {
-        drawRoundRect(px, py + 10, 18, 14, 4, "#d97706", "#78350f");
-        ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.arc(px + 9, py + 4, 12, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#86efac"; ctx.beginPath(); ctx.arc(px + 6, py + 1, 5, 0, Math.PI * 2); ctx.fill();
+      // ===== 4. 소심 유튜브 스튜디오 (Bottom Left) =====
+      drawRoundRect(18, 342, 336, 182, 12, "#faf5ff", "#a855f7");
+      drawRoundRect(34, 382, 304, 128, 14, "#f3e8ff");
+      drawRoundRect(26, 348, 152, 22, 6, "#111827");
+      ctx.fillStyle = "#d8b4fe"; ctx.fillText("💜 소심 유튜브 스튜디오", 34, 364);
+      // Cozy Sofa + Cushions + Coffee Table
+      drawRoundRect(40, 424, 112, 46, 10, "#9333ea", "#581c87");
+      drawRoundRect(48, 430, 26, 22, 5, "#f472b6"); // pink cushion
+      drawRoundRect(118, 430, 26, 22, 5, "#fde047"); // yellow cushion
+      drawRoundRect(68, 480, 56, 24, 6, "#f8fafc", "#94a3b8"); // coffee table
+      // Editing Desk
+      drawDeskWithChair(190, 396, 126, "#a855f7", "#ec4899", "#38bdf8");
+
+      // ===== 5. 블렌더 3D & 카페 휴게실 (Bottom Right) =====
+      drawRoundRect(676, 342, 266, 182, 12, "#fff7ed", "#f97316");
+      drawRoundRect(692, 382, 234, 128, 14, "#ffedd5");
+      drawRoundRect(684, 348, 154, 22, 6, "#111827");
+      ctx.fillStyle = "#fdba74"; ctx.fillText("🧡 블렌더 3D & 카페", 692, 364);
+      // Coffee Bar & Espresso Machine
+      drawRoundRect(700, 390, 120, 36, 6, "#92400e", "#451a03");
+      drawRoundRect(714, 382, 28, 22, 4, "#94a3b8", "#334155"); // espresso machine
+      drawRoundRect(752, 386, 16, 16, 3, "#ef4444"); // mug warmer
+      // Bookshelves & Beanbags
+      drawBookshelf(836, 386, 86, 46);
+      ctx.fillStyle = "#fb923c"; ctx.beginPath(); ctx.arc(736, 470, 20, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#38bdf8"; ctx.beginPath(); ctx.arc(792, 470, 20, 0, Math.PI * 2); ctx.fill();
+      drawBookshelf(836, 444, 86, 56);
+
+      // Cute Plants around corridor
+      for (let [px, py] of [[254, 256], [692, 256], [30, 296], [912, 296]]) {
+        drawPlant(px, py);
       }
     }
 
@@ -638,82 +717,73 @@
       const x = Math.round(a.x);
       const y = Math.round(a.y + bob);
 
-      // Soft Shadow
-      ctx.fillStyle = "rgba(0,0,0,0.18)";
-      ctx.beginPath(); ctx.ellipse(x, a.y + 20, 14, 5, 0, 0, Math.PI * 2); ctx.fill();
+      // Shadow
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.beginPath(); ctx.ellipse(x, a.y + 22, 16, 6, 0, 0, Math.PI * 2); ctx.fill();
 
-      // Cute Chibi Body
-      drawRoundRect(x - 10, y - 2, 20, 20, 7, a.shirt, "#1e293b");
+      // Cute Chibi Body (Slightly larger & rounder)
+      drawRoundRect(x - 12, y - 2, 24, 22, 8, a.shirt, "#1e293b");
 
-      // Character Specific Accessories & Hair
       if (a.type === "anger") {
-        // Boxy head + flame on top
-        drawRoundRect(x - 13, y - 24, 26, 22, 5, a.skin, "#1e293b");
+        drawRoundRect(x - 15, y - 28, 30, 25, 6, a.skin, "#1e293b");
         ctx.fillStyle = "#f97316";
-        ctx.beginPath(); ctx.moveTo(x - 8, y - 24); ctx.lineTo(x - 3, y - 35); ctx.lineTo(x + 2, y - 26); ctx.lineTo(x + 7, y - 36); ctx.lineTo(x + 10, y - 24); ctx.fill();
-        // Tie
-        ctx.fillStyle = a.accent; ctx.fillRect(x - 2, y + 1, 4, 12);
+        ctx.beginPath(); ctx.moveTo(x - 10, y - 28); ctx.lineTo(x - 4, y - 40); ctx.lineTo(x + 2, y - 30); ctx.lineTo(x + 8, y - 41); ctx.lineTo(x + 12, y - 28); ctx.fill();
+        ctx.fillStyle = a.accent; ctx.fillRect(x - 2, y + 1, 5, 13);
       } else {
-        // Round cute head
-        ctx.fillStyle = a.skin; ctx.beginPath(); ctx.arc(x, y - 14, 13, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = a.skin; ctx.beginPath(); ctx.arc(x, y - 16, 15, 0, Math.PI * 2); ctx.fill();
         ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 2; ctx.stroke();
 
-        // Hair style
         ctx.fillStyle = a.hair;
         if (a.type === "joy") {
-          ctx.beginPath(); ctx.arc(x, y - 19, 13, Math.PI, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(x - 9, y - 15, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x, y - 22, 15, Math.PI, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x - 11, y - 17, 6, 0, Math.PI * 2); ctx.fill();
         } else if (a.type === "sadness") {
-          ctx.beginPath(); ctx.arc(x, y - 18, 13, Math.PI * 0.9, Math.PI * 2.1); ctx.fill();
-          // Big round glasses!
-          ctx.strokeStyle = "#1e3a8a"; ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.arc(x - 5, y - 13, 4.5, 0, Math.PI * 2); ctx.stroke();
-          ctx.beginPath(); ctx.arc(x + 5, y - 13, 4.5, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(x, y - 21, 15, Math.PI * 0.9, Math.PI * 2.1); ctx.fill();
+          ctx.strokeStyle = "#1e3a8a"; ctx.lineWidth = 2.2;
+          ctx.beginPath(); ctx.arc(x - 6, y - 15, 5, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(x + 6, y - 15, 5, 0, Math.PI * 2); ctx.stroke();
         } else if (a.type === "disgust") {
-          ctx.beginPath(); ctx.arc(x, y - 19, 13, Math.PI, Math.PI * 2); ctx.fill();
-          // Purple scarf
-          drawRoundRect(x - 9, y - 3, 18, 5, 2, a.accent);
+          ctx.beginPath(); ctx.arc(x, y - 22, 15, Math.PI, Math.PI * 2); ctx.fill();
+          drawRoundRect(x - 10, y - 3, 20, 6, 3, a.accent);
         } else if (a.type === "anxiety") {
-          // Wild spiky orange hair
-          ctx.beginPath(); ctx.moveTo(x - 10, y - 22); ctx.lineTo(x - 6, y - 34); ctx.lineTo(x, y - 26); ctx.lineTo(x + 6, y - 35); ctx.lineTo(x + 11, y - 22); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(x - 12, y - 25); ctx.lineTo(x - 7, y - 39); ctx.lineTo(x, y - 30); ctx.lineTo(x + 7, y - 40); ctx.lineTo(x + 13, y - 25); ctx.fill();
         } else if (a.type === "fear") {
-          // Single curly hair + bowtie
-          ctx.beginPath(); ctx.arc(x, y - 29, 3, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = a.accent; ctx.fillRect(x - 5, y - 2, 10, 4);
+          ctx.beginPath(); ctx.arc(x, y - 33, 3.5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = a.accent; ctx.fillRect(x - 6, y - 2, 12, 5);
         }
       }
 
-      // Cute Sparkly Eyes
+      // Sparkly Eyes
       ctx.fillStyle = "#0f172a";
-      ctx.beginPath(); ctx.arc(x - 5, y - 13, 2.2, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(x + 5, y - 13, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x - 6, y - 15, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + 6, y - 15, 2.5, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x - 6, y - 14, 1.5, 1.5);
-      ctx.fillRect(x + 4, y - 14, 1.5, 1.5);
+      ctx.fillRect(x - 7, y - 16, 1.8, 1.8);
+      ctx.fillRect(x + 5, y - 16, 1.8, 1.8);
 
-      // Smile
-      ctx.strokeStyle = "#0f172a"; ctx.lineWidth = 1.5;
+      // Mouth
+      ctx.strokeStyle = "#0f172a"; ctx.lineWidth = 1.8;
       ctx.beginPath();
-      if (a.type === "sadness") ctx.arc(x, y - 7, 3, Math.PI * 1.1, Math.PI * 1.9);
-      else ctx.arc(x, y - 10, 3.5, 0.1 * Math.PI, 0.9 * Math.PI);
+      if (a.type === "sadness") ctx.arc(x, y - 8, 3.5, Math.PI * 1.1, Math.PI * 1.9);
+      else ctx.arc(x, y - 11, 4, 0.1 * Math.PI, 0.9 * Math.PI);
       ctx.stroke();
 
-      // Nameplate
+      // Big Nameplate
       ctx.font = "bold 13px sans-serif";
-      const tw = ctx.measureText(a.label).width + 12;
-      drawRoundRect(x - tw / 2, a.y + 22, tw, 22, 6, "#0f172a");
+      const tw = ctx.measureText(a.label).width + 14;
+      drawRoundRect(x - tw / 2, a.y + 24, tw, 22, 6, "#0f172a");
       ctx.fillStyle = "#ffffff";
-      ctx.fillText(a.label, x - tw / 2 + 6, a.y + 37);
+      ctx.fillText(a.label, x - tw / 2 + 7, a.y + 39);
 
-      // Speech Bubble
+      // Big Speech Bubble
       if (a.msg) {
         ctx.font = "bold 13px sans-serif";
-        const bw = ctx.measureText(a.msg).width + 16;
+        const bw = ctx.measureText(a.msg).width + 18;
         const bx = Math.max(8, Math.min(960 - bw - 8, x - bw / 2));
-        const by = y - 56;
-        drawRoundRect(bx, by - 5, bw, 26, 8, "rgba(15, 23, 42, 0.94)", a.skin);
+        const by = y - 66;
+        drawRoundRect(bx, by, bw, 26, 8, "rgba(15, 23, 42, 0.95)", a.skin);
         ctx.fillStyle = "#ffffff";
-        ctx.fillText(a.msg, bx + 8, by + 12);
+        ctx.fillText(a.msg, bx + 9, by + 17);
       }
     }
 
