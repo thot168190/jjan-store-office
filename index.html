@@ -3,479 +3,370 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JJAN STUDIO | 코다리 AI 가상 사무실</title>
+  <title>JJAN AI HQ | 코다리 가상 오피스</title>
   <style>
     :root {
-      --bg: #f3f5f8;
-      --surface: #ffffff;
-      --surface-2: #f1f3f6;
-      --border: #e5e8ec;
-      --text: #111827;
-      --text-sub: #6b7280;
-      --accent: #111827;
-      --brand: #2563eb;
-      --brand-soft: #eff6ff;
-      --green: #059669;
-      --green-soft: #ecfdf5;
-      --amber: #d97706;
-      --amber-soft: #fffbeb;
-      --purple: #7c3aed;
-      --purple-soft: #f5f3ff;
-      --radius: 16px;
+      --bg: #050a08;
+      --panel: #0a1410;
+      --panel-2: #0f1e18;
+      --border: #174d38;
+      --neon: #22c55e;
+      --neon-bright: #4ade80;
+      --neon-glow: rgba(34, 197, 94, 0.35);
+      --text: #ecfdf5;
+      --text-dim: #86efac;
+      --muted: #6b7280;
+      --amber: #fbbf24;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", monospace;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-    .layout { display: flex; min-height: 100vh; }
-
-    /* Sidebar */
-    .sidebar {
-      width: 230px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 20px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-    .logo-box { padding: 6px 10px 18px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
-    .logo-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
-    .logo-sub { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-    .nav-list { display: flex; flex-direction: column; gap: 4px; }
-    .nav-btn {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; padding: 10px 12px; border: none; background: transparent;
-      border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--text-sub);
-      cursor: pointer; text-align: left; transition: all 0.15s ease;
-    }
-    .nav-btn:hover { background: var(--surface-2); color: var(--text); }
-    .nav-btn.active { background: var(--accent); color: #fff; }
-    .nav-badge { font-size: 11px; padding: 1px 7px; border-radius: 99px; background: rgba(107,114,128,0.15); }
-    .nav-btn.active .nav-badge { background: rgba(255,255,255,0.22); color: #fff; }
-
-    .status-box { background: var(--surface-2); border-radius: 12px; padding: 12px; font-size: 12px; }
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 2s infinite; }
-
-    /* Main */
-    .main { flex: 1; padding: 24px 28px; max-width: 1200px; width: 100%; }
-    .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-    .page-title { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
-    .page-desc { font-size: 13px; color: var(--text-sub); margin-top: 3px; }
-    .top-pill {
-      display: inline-flex; align-items: center; gap: 6px; background: var(--surface);
-      border: 1px solid var(--border); padding: 7px 12px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .mobile-tabs {
-      display: none; gap: 6px; overflow-x: auto; padding-bottom: 12px;
-      margin-bottom: 16px; border-bottom: 1px solid var(--border);
-    }
-    .mobile-tabs .nav-btn {
-      width: auto; white-space: nowrap; padding: 8px 12px; font-size: 13px;
-      background: var(--surface); border: 1px solid var(--border);
-    }
-    .mobile-tabs .nav-btn.active { background: var(--accent); border-color: var(--accent); }
-
-    .section { display: none; }
-    .section.active { display: block; }
-
-    /* VIRTUAL OFFICE FLOOR PLAN */
-    .office-floor {
-      background: linear-gradient(180deg, #eef2f7 0%, #e6ebf2 100%);
-      border: 2px solid #d5dce6;
-      border-radius: 20px;
-      padding: 22px;
-      position: relative;
-      overflow: hidden;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.45) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.45) 1px, transparent 1px);
-      background-size: 28px 28px;
-      margin-bottom: 20px;
-    }
-    .office-banner {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
-    }
-    .office-sign {
-      background: #111827; color: #fff; font-size: 12px; font-weight: 700;
-      padding: 5px 12px; border-radius: 8px; letter-spacing: 0.3px;
-    }
-    .office-hint { font-size: 12px; color: #4b5563; font-weight: 600; }
-
-    .desks-grid {
+    /* Layout */
+    .app {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      grid-template-columns: 300px 1fr;
+      min-height: 100vh;
     }
-    .desk-card {
-      background: rgba(255, 255, 255, 0.94);
-      border: 2px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px 14px 14px;
-      cursor: pointer;
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-      position: relative;
+
+    /* Left Command Console */
+    .console {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .desk-card:hover { transform: translateY(-3px); border-color: #93c5fd; box-shadow: 0 8px 20px rgba(37,99,235,0.08); }
-    .desk-card.selected { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(37,99,235,0.16); background: #fff; }
-    .desk-card.ceo-desk { background: linear-gradient(180deg, #fffdf5 0%, #ffffff 100%); border-color: #fde68a; }
-
-    .speech-bubble {
-      background: #1f2937;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 5px 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      position: relative;
-      max-width: 100%;
-      line-height: 1.35;
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .speech-bubble::after {
-      content: "";
-      position: absolute;
-      bottom: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 5px 5px 0;
-      border-style: solid;
-      border-color: #1f2937 transparent transparent;
-    }
-
-    .char-stage {
-      width: 78px;
-      height: 78px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      margin-bottom: 8px;
-      border: 2px solid rgba(0,0,0,0.06);
-    }
-    .char-avatar {
-      width: 64px;
-      height: 64px;
-      animation: floatBob 2.6s ease-in-out infinite;
-    }
-    .desk-card:nth-child(2) .char-avatar { animation-delay: 0.3s; }
-    .desk-card:nth-child(3) .char-avatar { animation-delay: 0.6s; }
-    .desk-card:nth-child(4) .char-avatar { animation-delay: 0.9s; }
-    .desk-card:nth-child(5) .char-avatar { animation-delay: 1.2s; }
-    .desk-card:nth-child(6) .char-avatar { animation-delay: 1.5s; }
-
-    .desk-plate {
-      width: 100%;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 7px 8px;
-      margin-top: 2px;
-    }
-    .char-name { font-size: 14px; font-weight: 800; color: var(--text); }
-    .char-title { font-size: 11px; color: var(--text-sub); font-weight: 600; }
-    .char-status {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 10px; font-weight: 700; margin-top: 5px;
-      padding: 2px 7px; border-radius: 99px;
-    }
-
-    /* Selected Staff Inspector Panel */
-    .inspector-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      display: flex;
       justify-content: space-between;
+      padding: 14px;
+      gap: 12px;
+    }
+    .brand-bar {
+      display: flex;
       align-items: center;
-      gap: 16px;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-left { display: flex; align-items: center; gap: 10px; }
+    .brand-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: linear-gradient(135deg, #16a34a, #065f46);
+      border: 1px solid var(--neon);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; box-shadow: 0 0 12px var(--neon-glow);
+    }
+    .brand-name { font-size: 15px; font-weight: 800; color: var(--neon-bright); letter-spacing: 0.5px; }
+    .brand-sub { font-size: 11px; color: var(--text-dim); opacity: 0.8; }
+
+    .feed-box {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: calc(100vh - 250px);
+      padding-right: 2px;
+    }
+    .log-card {
+      background: var(--panel-2);
+      border: 1px solid #163b2c;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .log-card.ceo { border-color: #854d0e; background: #171206; }
+    .log-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4px; font-size: 11px; font-weight: 700; color: var(--neon-bright);
+    }
+    .log-card.ceo .log-head { color: var(--amber); }
+    .log-time { color: var(--muted); font-weight: 400; }
+
+    /* Command Input */
+    .cmd-box {
+      border: 1px solid var(--neon);
+      border-radius: 12px;
+      background: #07110d;
+      padding: 10px;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.15);
+    }
+    .cmd-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 8px;
+    }
+    .cmd-input::placeholder { color: #4b705e; }
+    .cmd-foot {
+      display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    }
+    .cmd-select {
+      background: #0f1e18; color: var(--text-dim); border: 1px solid var(--border);
+      border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700;
+    }
+    .cmd-btn {
+      background: var(--neon); color: #052e16; border: none;
+      border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 800; cursor: pointer;
+    }
+    .cmd-btn:hover { background: var(--neon-bright); }
+
+    /* Right Workspace */
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 18px;
+      gap: 14px;
+    }
+
+    /* Top HUD */
+    .hud-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       flex-wrap: wrap;
     }
-    .inspector-left { flex: 1; min-width: 240px; }
-    .inspector-role { font-size: 12px; font-weight: 700; color: var(--brand); }
-    .inspector-name { font-size: 18px; font-weight: 800; margin: 2px 0 6px; }
-    .inspector-duty { font-size: 13px; color: #374151; }
+    .hud-pills { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .hud-pill {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+    .hud-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .hud-val { font-size: 15px; font-weight: 800; color: var(--neon-bright); }
 
-    /* KPI & Cards */
-    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-    .kpi-label { font-size: 12px; color: var(--text-sub); font-weight: 600; }
-    .kpi-val { font-size: 22px; font-weight: 800; margin-top: 6px; }
-    .kpi-sub { font-size: 11px; color: var(--green); margin-top: 4px; font-weight: 600; }
+    .hud-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .toggle-btn {
+      background: #0b291c; border: 1px solid var(--neon); color: var(--neon-bright);
+      padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 0 12px var(--neon-glow);
+    }
+    .toggle-btn.off { background: #141917; border-color: #374151; color: #9ca3af; box-shadow: none; }
+    .nav-pill {
+      background: var(--panel); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .nav-pill.active { background: var(--neon); color: #052e16; border-color: var(--neon); }
 
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+    /* Live Status Bar */
+    .status-strip {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--panel); border: 1px solid #163b2c; border-radius: 10px;
+      padding: 7px 14px; font-size: 12px;
+    }
+    .dot-live {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--neon); margin-right: 8px; box-shadow: 0 0 8px var(--neon);
+      animation: blink 1.5s infinite;
     }
 
-    .badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
-    .badge-green { background: var(--green-soft); color: var(--green); }
-    .badge-blue { background: var(--brand-soft); color: var(--brand); }
-    .badge-amber { background: var(--amber-soft); color: var(--amber); }
-    .badge-purple { background: var(--purple-soft); color: var(--purple); }
+    /* Pixel Office Canvas Container */
+    .office-wrap {
+      position: relative;
+      background: #0c1317;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    canvas#officeCanvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      image-rendering: pixelated;
+      cursor: pointer;
+    }
+    .office-overlay-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(5, 10, 8, 0.85);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--neon-bright);
+      pointer-events: none;
+    }
 
-    /* Todo */
-    .todo-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
-    .todo-input {
-      flex: 1; padding: 11px 14px; border: 1px solid var(--border);
-      border-radius: 10px; font-size: 14px; background: var(--surface); outline: none;
-    }
-    .todo-input:focus { border-color: var(--brand); }
-    .todo-select { padding: 0 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); font-size: 13px; font-weight: 600; }
-    .btn-primary {
-      background: var(--accent); color: #fff; border: none; padding: 0 18px;
-      border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
-    }
-    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .pill-btn {
-      border: 1px solid var(--border); background: var(--surface); padding: 5px 11px;
-      border-radius: 99px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-sub);
-    }
-    .pill-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+    /* Bottom Drawer / Sub Panels */
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
 
-    .todo-list { display: flex; flex-direction: column; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .dark-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+    }
+    .dark-card h3 { font-size: 14px; color: var(--neon-bright); margin-bottom: 8px; }
+    .dark-card p, .dark-card li { font-size: 12px; color: #d1fae5; line-height: 1.5; }
+    .dark-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .dark-card li { background: var(--panel-2); padding: 8px 10px; border-radius: 8px; border: 1px solid #163b2c; }
+
+    /* Todo Items */
     .todo-item {
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
+      background: var(--panel); border: 1px solid #163b2c; border-radius: 10px; padding: 10px 12px;
+      margin-bottom: 8px;
     }
     .todo-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-    .todo-left input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--brand); cursor: pointer; flex-shrink: 0; }
-    .todo-text { font-size: 14px; font-weight: 500; word-break: break-word; }
-    .todo-item.done .todo-text { text-decoration: line-through; color: var(--text-sub); }
-    .todo-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .del-btn { border: none; background: transparent; color: #9ca3af; font-size: 14px; cursor: pointer; padding: 4px 6px; }
-    .del-btn:hover { color: #ef4444; }
-
-    .track-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
-    .track-list { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
-    .track-list li { background: var(--surface-2); padding: 10px 12px; border-radius: 10px; }
-
-    @keyframes floatBob {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
+    .todo-left input { width: 17px; height: 17px; accent-color: var(--neon); cursor: pointer; }
+    .todo-text { font-size: 13px; color: var(--text); word-break: break-word; }
+    .todo-item.done .todo-text { text-decoration: line-through; color: var(--muted); }
+    .owner-tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 6px;
+      background: #0b291c; color: var(--neon-bright); border: 1px solid #174d38; white-space: nowrap;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
+    .del-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; }
 
-    @media (max-width: 960px) {
-      .desks-grid { grid-template-columns: repeat(2, 1fr); }
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 680px) {
-      .sidebar { display: none; }
-      .mobile-tabs { display: flex; }
-      .main { padding: 14px; }
-      .office-floor { padding: 14px; }
-      .desks-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .desk-card { padding: 12px 8px 10px; }
-      .speech-bubble { font-size: 10px; padding: 4px 7px; min-height: 34px; }
-      .char-stage { width: 64px; height: 64px; }
-      .char-avatar { width: 52px; height: 52px; }
-      .grid-2 { grid-template-columns: 1fr; }
-      .todo-input-row { flex-wrap: wrap; }
-      .todo-select { height: 42px; flex: 1; }
-      .btn-primary { height: 42px; padding: 0 20px; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+      .console { order: 2; border-right: none; border-top: 1px solid var(--border); }
+      .feed-box { max-height: 220px; }
+      .workspace { order: 1; padding: 12px; }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
+  <div class="app">
+    <!-- Left Command Console -->
+    <aside class="console">
       <div>
-        <div class="logo-box">
-          <div class="logo-title">🏢 JJAN STUDIO</div>
-          <div class="logo-sub">대표님 × AI 직원 가상 사무실</div>
+        <div class="brand-bar">
+          <div class="brand-left">
+            <div class="brand-icon">⚡</div>
+            <div>
+              <div class="brand-name">JJAN AI HQ</div>
+              <div class="brand-sub">코다리 자율 본부 v2.0</div>
+            </div>
+          </div>
+          <span style="font-size:11px; color:var(--neon); font-weight:700;">● ONLINE</span>
         </div>
-        <div class="nav-list">
-          <button class="nav-btn active" onclick="switchTab('office')">
-            <span>🏢 가상 사무실</span>
-            <span class="nav-badge">6석</span>
-          </button>
-          <button class="nav-btn" onclick="switchTab('todo')">
-            <span>✅ 오늘 할 일</span>
-            <span class="nav-badge" id="todoCountBadge">0</span>
-          </button>
-          <button class="nav-btn" onclick="switchTab('tracks')">
-            <span>🚀 투 트랙 사업판</span>
-          </button>
-          <button class="nav-btn" onclick="switchTab('assets')">
-            <span>🧰 보유 무기 & 도메인</span>
-          </button>
-        </div>
+
+        <div class="feed-box" id="feedBox" style="margin-top:12px;"></div>
       </div>
-      <div class="status-box">
-        <div><span class="status-dot"></span><strong>jjan.store 정상 출근 중</strong></div>
-        <div style="color: var(--text-sub); margin-top: 6px; line-height: 1.4;">
-          기본 브라우저: Ego Lite<br/>
-          서버비: $0 (GitHub Pages)<br/>
-          2026-11-27 가동
+
+      <div class="cmd-box">
+        <input id="cmdInput" class="cmd-input" type="text" placeholder="한 줄 명령을 내리세요 (예: 학원 블로그 글 써봐)" />
+        <div class="cmd-foot">
+          <select id="cmdTarget" class="cmd-select">
+            <option value="코다리">🐟 코다리 부장</option>
+            <option value="글쓰기">🦉 글쓰기 작가</option>
+            <option value="마케팅">🦊 마케팅 여우</option>
+            <option value="3D호랑이">🐯 3D 호랑이</option>
+            <option value="유튜브PD">🐻 유튜브 PD</option>
+          </select>
+          <button class="cmd-btn" onclick="dispatchCommand()">명령 실행 ⚡</button>
         </div>
       </div>
     </aside>
 
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <div class="page-title" id="headerTitle">🏢 우리 회사 가상 사무실</div>
-          <div class="page-desc">직원 캐릭터를 누르면 담당 업무와 오늘 할 일을 바로 확인할 수 있습니다.</div>
+    <!-- Right Main Office -->
+    <main class="workspace">
+      <div class="hud-bar">
+        <div class="hud-pills">
+          <div class="hud-pill">
+            <span>📅</span>
+            <div>
+              <div class="hud-label">DAY</div>
+              <div class="hud-val">1일차</div>
+            </div>
+          </div>
+          <div class="hud-pill">
+            <span>⏰</span>
+            <div>
+              <div class="hud-label">TIME</div>
+              <div class="hud-val" id="clockVal">10:42</div>
+            </div>
+          </div>
+          <div class="hud-pill">
+            <span>🎯</span>
+            <div>
+              <div class="hud-label">FOCUS</div>
+              <div class="hud-val">학원·청소·블렌더</div>
+            </div>
+          </div>
         </div>
-        <div class="top-pill">🌐 jjan.store 본부</div>
+
+        <div class="hud-actions">
+          <button class="toggle-btn" id="autoToggleBtn" onclick="toggleAutoMode()">● 24시간 자동운영 ON</button>
+          <button class="nav-pill active" onclick="switchView('office', this)">🏢 사무실</button>
+          <button class="nav-pill" onclick="switchView('todo', this)">✅ 할 일 (<span id="todoBadge">0</span>)</button>
+          <button class="nav-pill" onclick="switchView('tracks', this)">🚀 전략판</button>
+        </div>
       </div>
 
-      <div class="mobile-tabs">
-        <button class="nav-btn active" onclick="switchTab('office')">🏢 사무실</button>
-        <button class="nav-btn" onclick="switchTab('todo')">✅ 할 일</button>
-        <button class="nav-btn" onclick="switchTab('tracks')">🚀 투 트랙</button>
-        <button class="nav-btn" onclick="switchTab('assets')">🧰 무기</button>
+      <div class="status-strip">
+        <div><span class="dot-live"></span><strong id="statusMsg">사무실 가동 중 · 6명 전원 자기 자리에서 업무 수행 중</strong></div>
+        <div style="color:var(--text-dim); font-size:11px;">캐릭터를 클릭하면 현재 작업과 보고가 뜹니다</div>
       </div>
 
-      <!-- 1. VIRTUAL OFFICE -->
-      <section id="tab-office" class="section active">
-        <div class="office-floor">
-          <div class="office-banner">
-            <span class="office-sign">📍 1인 AI 본부 오피스 플로어</span>
-            <span class="office-hint">캐릭터를 클릭해 업무를 확인하세요 👇</span>
-          </div>
-
-          <div class="desks-grid" id="desksGrid"></div>
+      <!-- VIEW 1: PIXEL OFFICE -->
+      <section id="view-office" class="sub-panel active">
+        <div class="office-wrap">
+          <div class="office-overlay-badge">DISPATCH PROTOCOL · LIVE PIXEL OFFICE</div>
+          <canvas id="officeCanvas" width="960" height="540"></canvas>
         </div>
 
-        <div class="inspector-box" id="inspectorBox">
-          <div class="inspector-left">
-            <div class="inspector-role" id="inspRole">CEO · 최고 결정권자</div>
-            <div class="inspector-name" id="inspName">👑 대표님</div>
-            <div class="inspector-duty" id="inspDuty">사업 방향 결정, 최종 승인, 블로그·철만이 사연 감수 및 오프라인 연결 총괄</div>
+        <div class="grid-3" style="margin-top:12px;">
+          <div class="dark-card">
+            <h3 id="selName">👑 대표님 (CEO 실)</h3>
+            <p id="selDesc">현재 위치: CEO 전용실 · 전체 AI 직원 지휘 및 최종 승인 대기</p>
           </div>
-          <div>
-            <button class="btn-primary" style="height: 40px;" onclick="goToMemberTodos()">이 직원 할 일 보기 →</button>
+          <div class="dark-card">
+            <h3>📌 오늘 핵심 목표</h3>
+            <p>1. 멘토 자료 숙지 & 내 블로그 테스트<br/>2. 블렌더 3D 호랑이/친구 광고 짤 테스트</p>
+          </div>
+          <div class="dark-card">
+            <h3>🌐 보유 도메인 & 자산</h3>
+            <p>jjan.store (~2027-04) · inkword.site (~2027-07)<br/>연장 안 함 (내년 0원 확정)</p>
           </div>
         </div>
       </section>
 
-      <!-- 2. TODO -->
-      <section id="tab-todo" class="section">
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">남은 할 일</div>
-            <div class="kpi-val" id="kpiRemain">0건</div>
-            <div class="kpi-sub">실시간 체크</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">완료한 일</div>
-            <div class="kpi-val" id="kpiDone">0건</div>
-            <div class="kpi-sub">누적 달성</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">출근한 AI 직원</div>
-            <div class="kpi-val">5팀</div>
-            <div class="kpi-sub">전원 진단 OK</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">주력 수익 타깃</div>
-            <div class="kpi-val">학원·청소</div>
-            <div class="kpi-sub">블로그+3D+웹앱</div>
-          </div>
+      <!-- VIEW 2: TODO -->
+      <section id="view-todo" class="sub-panel">
+        <div class="dark-card">
+          <h3>✅ 직원별 업무 분장 & 투두 리스트</h3>
+          <div id="todoList" style="margin-top:10px;"></div>
         </div>
-
-        <div class="todo-input-row">
-          <input id="todoInput" class="todo-input" type="text" placeholder="대표님, 새로운 할 일을 입력하세요..." />
-          <select id="todoOwner" class="todo-select">
-            <option value="대표님">👑 대표님</option>
-            <option value="코다리">🐟 코다리</option>
-            <option value="글쓰기직원">🦉 글쓰기</option>
-            <option value="마케팅팀">🦊 마케팅</option>
-            <option value="블렌더/모션">🐯 3D호랑이</option>
-            <option value="유튜브팀">🐻 유튜브PD</option>
-          </select>
-          <button class="btn-primary" onclick="addTodo()">추가</button>
-        </div>
-
-        <div class="filter-pills" id="filterPills">
-          <button class="pill-btn active" onclick="setFilter('ALL')">전체 보기</button>
-          <button class="pill-btn" onclick="setFilter('대표님')">👑 대표님</button>
-          <button class="pill-btn" onclick="setFilter('코다리')">🐟 코다리</option>
-          <button class="pill-btn" onclick="setFilter('글쓰기직원')">🦉 글쓰기</button>
-          <button class="pill-btn" onclick="setFilter('마케팅팀')">🦊 마케팅</button>
-          <button class="pill-btn" onclick="setFilter('블렌더/모션')">🐯 3D호랑이</button>
-          <button class="pill-btn" onclick="setFilter('유튜브팀')">🐻 유튜브PD</button>
-        </div>
-
-        <div id="todoList" class="todo-list"></div>
       </section>
 
-      <!-- 3. TRACKS -->
-      <section id="tab-tracks" class="section">
+      <!-- VIEW 3: TRACKS -->
+      <section id="view-tracks" class="sub-panel">
         <div class="grid-2">
-          <div class="card">
-            <div>
-              <div class="track-title">💰 단기 현금 트랙 (오늘 ~ 6개월)</div>
-              <p class="page-desc" style="margin-bottom: 12px;">실제 시장 영수증으로 검증된 돈 도는 자리</p>
-              <ul class="track-list">
-                <li><strong>1. 내 블로그 먼저 실전 테스트:</strong> 글쓰기 직원 + 블렌더 3D 호랑이/친구 GIF 짤 넣기</li>
-                <li><strong>2. 학원 원장님 패키지 (키핑):</strong> 동네 내신 블로그 + 1분 진단/상담 웹앱 + 원장님 카톡 알림</li>
-                <li><strong>3. 청소·이사 사장님 패키지 (병행):</strong> 입주/이사 블로그 + 1분 평수 예상 견적 웹앱</li>
-                <li><strong>4. 판매 홍보 방식:</strong> 2D 대신 <strong>블렌더 3D 광고 영상</strong>으로 압도적 차별화!</li>
-              </ul>
-            </div>
+          <div class="dark-card">
+            <h3>💰 단기 현금 트랙 (오늘 ~ 6개월)</h3>
+            <ul>
+              <li><strong>내 블로그 먼저 테스트:</strong> 글쓰기 직원 + 블렌더 3D 호랑이/친구 움짤</li>
+              <li><strong>학원 원장님 패키지:</strong> 동네 내신 블로그 + 1분 진단/상담 웹앱 + 카톡 알림</li>
+              <li><strong>청소·이사 패키지:</strong> 입주 블로그 + 1분 평수 예상 견적 웹앱</li>
+              <li><strong>홍보 방식:</strong> 2D 대신 블렌더 3D 광고로 압도적 차별화</li>
+            </ul>
           </div>
-          <div class="card">
-            <div>
-              <div class="track-title">🚀 장기 미래 트랙 (2 ~ 3년 투자)</div>
-              <p class="page-desc" style="margin-bottom: 12px;">피지컬 AI(로봇) 일상화 시대를 선점하는 본진</p>
-              <ul class="track-list">
-                <li><strong>1. 3D 웹 & 가상 쇼룸:</strong> 블렌더 3D 실력을 브랜드 3D 웹(건당 120만+)으로 연결</li>
-                <li><strong>2. 소상공인 피지컬 AI 세팅:</strong> 동네 매장 로봇 도입 시 3D 공간(XR) 복제 + 강화학습 시뮬 세팅</li>
-                <li><strong>3. 유튜브 자산 채널:</strong> 철만이(5070 사연) + ZeroCost Ops 꾸준한 팬덤 축적</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. ASSETS -->
-      <section id="tab-assets" class="section">
-        <div class="grid-2">
-          <div class="card">
-            <div>
-              <div class="track-title">📚 공부방 핵심 자료 & 도구</div>
-              <ul class="track-list">
-                <li><strong>멘토 자료 총정리:</strong> 01_교재_및_기획문서/2026-11-27_멘토자료_총정리_및_가용무기_로드맵.md</li>
-                <li><strong>AI 직원 도구:</strong> 05_AI_직원_도구/ (connect-ai-marketer, connect-ai-writer)</li>
-                <li><strong>최신 업무 인계서:</strong> 00_코다리_업무인계_최신.md</li>
-                <li><strong>철만이 사연 백로그:</strong> 02_유튜브_철만이/cheolmani_haircut_story_draft.md</li>
-              </ul>
-            </div>
-          </div>
-          <div class="card">
-            <div>
-              <div class="track-title">🌐 도메인 & 운영 채널</div>
-              <ul class="track-list">
-                <li><strong>대표님 사무실 (jjan.store):</strong> ~2027-04-23 (연장 X · 서버비 $0 가동 중!)</li>
-                <li><strong>데모용 도메인 (inkword.site):</strong> ~2027-07-05 (연장 X · 블로그/학원 웹앱용)</li>
-                <li><strong>철만이 (@cheolmani_diary):</strong> 사연 댓글 접수(중학교 머리밀기전)</li>
-                <li><strong>ZeroCost Ops (@zerocostops):</strong> 로컬 무료 TTS($0) 세팅 완료</li>
-              </ul>
-            </div>
+          <div class="dark-card">
+            <h3>🚀 장기 미래 트랙 (2 ~ 3년 투자)</h3>
+            <ul>
+              <li><strong>3D 웹 & 가상 쇼룸:</strong> 브랜드 3D 인터랙티브 웹(건당 120만+)</li>
+              <li><strong>소상공인 피지컬 AI:</strong> 로봇 일상화 시대 XR 공간 복제 + 강화학습 시뮬 세팅</li>
+              <li><strong>유튜브 자산 채널:</strong> 철만이(@cheolmani_diary) + ZeroCost Ops</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -483,223 +374,317 @@
   </div>
 
   <script>
-    const STAFF = [
-      {
-        id: "대표님",
-        name: "대표님",
-        role: "CEO · 최고 결정권자",
-        bg: "#fef3c7",
-        badgeClass: "badge-amber",
-        statusText: "지휘 중",
-        bubble: "감으로 하지 말고 영수증 팩트로 가자!",
-        duty: "사업 방향 결정, 최종 승인, 블로그·철만이 사연 감수 및 오프라인 영업 총괄",
-        isCeo: true,
-        svg: `<svg viewBox="0 0 64 64" class="char-avatar"><circle cx="32" cy="34" r="20" fill="#fde68a"/><path d="M18 22 L24 10 L32 18 L40 10 L46 22 Z" fill="#f59e0b" stroke="#b45309" stroke-width="2"/><circle cx="25" cy="34" r="2.8" fill="#1f2937"/><circle cx="39" cy="34" r="2.8" fill="#1f2937"/><path d="M27 42 Q32 46 37 42" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`
-      },
-      {
-        id: "코다리",
-        name: "코다리 부장",
-        role: "Antigravity · 총괄/리서치",
-        bg: "#dbeafe",
-        badgeClass: "badge-green",
-        statusText: "24시간 대기",
-        bubble: "시장 실사 & 웹앱 설계 완료했습니다!",
-        duty: "시장 실거래 조사(ego-browser), 사업 구조 해부, 진단/견적 웹앱 개발 및 전체 AI 팀 지휘",
-        svg: `<svg viewBox="0 0 64 64" class="char-avatar"><ellipse cx="32" cy="34" rx="22" ry="16" fill="#60a5fa"/><polygon points="52,34 62,24 62,44" fill="#3b82f6"/><circle cx="22" cy="31" r="4.5" fill="#fff"/><circle cx="22" cy="31" r="2.2" fill="#111827"/><rect x="15" y="25" width="14" height="11" rx="3" fill="none" stroke="#1e3a8a" stroke-width="2"/><path d="M18 41 Q23 44 28 41" stroke="#1e3a8a" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`
-      },
-      {
-        id: "글쓰기직원",
-        name: "글쓰기 부엉이",
-        role: "connect-ai-writer · 작가",
-        bg: "#e0e7ff",
-        badgeClass: "badge-blue",
-        statusText: "원고 대기",
-        bubble: "AI 티 싹 빼고 사람 말투로 써드려요!",
-        duty: "네이버 블로그·스레드 글 작성, AI 말투 제거(humanize), 카드뉴스 생성 및 네이버 임시저장",
-        svg: `<svg viewBox="0 0 64 64" class="char-avatar"><circle cx="32" cy="35" r="20" fill="#818cf8"/><circle cx="24" cy="31" r="6" fill="#fff"/><circle cx="40" cy="31" r="6" fill="#fff"/><circle cx="24" cy="31" r="2.5" fill="#111827"/><circle cx="40" cy="31" r="2.5" fill="#111827"/><polygon points="29,37 35,37 32,42" fill="#fbbf24"/><path d="M16 19 L23 23 M48 19 L41 23" stroke="#4f46e5" stroke-width="3" stroke-linecap="round"/></svg>`
-      },
-      {
-        id: "마케팅팀",
-        name: "마케팅 여우",
-        role: "connect-ai-marketer · 홍보",
-        bg: "#ffedd5",
-        badgeClass: "badge-blue",
-        statusText: "레이더 가동",
-        bubble: "요즘 뜨는 키워드 & 떡상 패턴 스캔 중!",
-        duty: "유튜브 최근 2주 벤치마킹, 도입부 3초 해부, 학원·블로그·청소 키워드 매일 리스닝 및 SNS 동시 전파",
-        svg: `<svg viewBox="0 0 64 64" class="char-avatar"><polygon points="14,14 26,24 16,32" fill="#f97316"/><polygon points="50,14 38,24 48,32" fill="#f97316"/><circle cx="32" cy="36" r="18" fill="#fb923c"/><path d="M18 40 Q32 52 46 40 Q32 45 18 40 Z" fill="#fff"/><circle cx="25" cy="34" r="2.5" fill="#111827"/><circle cx="39" cy="34" r="2.5" fill="#111827"/><circle cx="32" cy="40" r="2.8" fill="#111827"/></svg>`
-      },
-      {
-        id: "블렌더/모션",
-        name: "3D 호랑이",
-        role: "Blender + connect-ai-motion",
-        bg: "#f3e8ff",
-        badgeClass: "badge-purple",
-        statusText: "3D 렌더링 대기",
-        bubble: "블로그 뛰어다니는 호랑이 출동 준비!",
-        duty: "2D 대신 블렌더 3D 광고 영상 제작, 학원 열공 친구·청소 호랑이 움직이는 GIF 움짤 생성",
-        svg: `<svg viewBox="0 0 64 64" class="char-avatar"><circle cx="17" cy="20" r="6" fill="#f59e0b"/><circle cx="47" cy="20" r="6" fill="#f59e0b"/><circle cx="32" cy="35" r="19" fill="#fbbf24"/><path d="M26 17 L32 23 L38 17 M15 33 L21 35 M49 33 L43 35" stroke="#78350f" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="25" cy="33" r="2.8" fill="#111827"/><circle cx="39" cy="33" r="2.8" fill="#111827"/><ellipse cx="32" cy="41" rx="7" ry="5" fill="#fffbeb"/><polygon points="30,38 34,38 32,41" fill="#111827"/></svg>`
-      },
-      {
-        id: "유튜브팀",
-        name: "유튜브 곰PD",
-        role: "철만이 & ZeroCost Ops",
-        bg: "#dcfce7",
-        badgeClass: "badge-amber",
-        statusText: "편집 스튜디오",
-        bubble: "철만이 14화 & 중학교 사연 대기 중!",
-        duty: "철만이 사연 채널(5070 공감) 및 글로벌 ZeroCost Ops 무료 성우($0) 영상 업로드 마무리",
-        svg: `<svg viewBox="0 0 64 64" class="char-avatar"><circle cx="17" cy="20" r="7" fill="#92400e"/><circle cx="47" cy="20" r="7" fill="#92400e"/><circle cx="32" cy="36" r="19" fill="#b45309"/><ellipse cx="32" cy="41" rx="8" ry="6" fill="#fde68a"/><circle cx="25" cy="33" r="2.5" fill="#111827"/><circle cx="39" cy="33" r="2.5" fill="#111827"/><circle cx="32" cy="39" r="2.8" fill="#111827"/></svg>`
-      }
-    ];
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("clockVal").textContent = `${hh}:${mm}`;
+    }
+    setInterval(updateClock, 10000);
+    updateClock();
 
-    let selectedStaffId = "대표님";
-    let currentFilter = "ALL";
+    // Logs & Todos
+    const DEFAULT_LOGS = [
+      { who: "대표님", isCeo: true, time: "10:40", msg: "우리 직원들 캐릭터 부여해서 진짜 사무실 공간으로 가동하라." },
+      { who: "코다리 부장", isCeo: false, time: "10:41", msg: "픽셀 오피스 플로어 배치 완료. 크몽·글로벌 시장 실사 데이터 대기 중입니다." },
+      { who: "글쓰기 작가", isCeo: false, time: "10:41", msg: "connect-ai-writer 세팅 OK. 블로그 초안과 AI 티 제거 준비됐습니다." },
+      { who: "3D 호랑이", isCeo: false, time: "10:42", msg: "블렌더 3D 호랑이 & 열공 친구 캐릭터 렌더링 대기 중!" }
+    ];
 
     const DEFAULT_TODOS = [
       { id: 1, text: "멘토 강의 자료 총정리본 훑어보며 흐름 익히기", owner: "대표님", done: false },
-      { id: 2, text: "에고 라이트(Ego Lite)에서 네이버·유튜브 로그인 1회 해두기", owner: "대표님", done: false },
-      { id: 3, text: "대표님 테스트 블로그 주제 정하고 글쓰기 직원으로 첫 글 뽑아보기", owner: "글쓰기직원", done: false },
-      { id: 4, text: "블렌더 켜서 3D 호랑이 / 열공 친구 캐릭터 움직이는 GIF 테스트", owner: "블렌더/모션", done: false },
-      { id: 5, text: "철만이 14화 업로드 및 '중학교 머리밀기' 사연 원고 집필", owner: "유튜브팀", done: false }
+      { id: 2, text: "에고 라이트에서 네이버·유튜브 로그인 1회 해두기", owner: "대표님", done: false },
+      { id: 3, text: "내 블로그 테스트 글 1편 뽑아보기 (AI티 제거)", owner: "글쓰기", done: false },
+      { id: 4, text: "블렌더 켜서 3D 호랑이 움직이는 GIF 테스트", owner: "3D호랑이", done: false },
+      { id: 5, text: "철만이 14화 업로드 & 중학교 머리밀기 사연 준비", owner: "유튜브PD", done: false }
     ];
 
-    let todos = JSON.parse(localStorage.getItem("kodari_studio_todos") || "null") || DEFAULT_TODOS;
+    let logs = JSON.parse(localStorage.getItem("jjan_hq_logs") || "null") || DEFAULT_LOGS;
+    let todos = JSON.parse(localStorage.getItem("jjan_hq_todos") || "null") || DEFAULT_TODOS;
+    let autoMode = true;
 
-    function renderOffice() {
-      const grid = document.getElementById("desksGrid");
-      grid.innerHTML = "";
-      STAFF.forEach(st => {
+    function renderLogs() {
+      const box = document.getElementById("feedBox");
+      box.innerHTML = "";
+      logs.forEach(l => {
         const div = document.createElement("div");
-        div.className = "desk-card" + (st.isCeo ? " ceo-desk" : "") + (st.id === selectedStaffId ? " selected" : "");
-        div.onclick = () => selectStaff(st.id);
+        div.className = "log-card" + (l.isCeo ? " ceo" : "");
         div.innerHTML = `
-          <div class="speech-bubble">${st.bubble}</div>
-          <div class="char-stage" style="background: ${st.bg};">${st.svg}</div>
-          <div class="desk-plate">
-            <div class="char-name">${st.name}</div>
-            <div class="char-title">${st.role}</div>
-            <span class="char-status ${st.badgeClass}">● ${st.statusText}</span>
-          </div>
+          <div class="log-head"><span>${l.isCeo ? "👑 " : "⚡ "}${l.who}</span><span class="log-time">${l.time}</span></div>
+          <div>${l.msg}</div>
         `;
-        grid.appendChild(div);
+        box.appendChild(div);
       });
-    }
-
-    function selectStaff(id) {
-      selectedStaffId = id;
-      const st = STAFF.find(s => s.id === id);
-      if (!st) return;
-      document.getElementById("inspRole").textContent = st.role;
-      document.getElementById("inspName").textContent = st.name;
-      document.getElementById("inspDuty").textContent = st.duty;
-      renderOffice();
-    }
-
-    function goToMemberTodos() {
-      setFilter(selectedStaffId);
-      switchTab("todo");
-    }
-
-    function saveTodos() {
-      localStorage.setItem("kodari_studio_todos", JSON.stringify(todos));
-      renderTodos();
-    }
-
-    function setFilter(owner) {
-      currentFilter = owner;
-      document.querySelectorAll(".pill-btn").forEach(b => {
-        b.classList.toggle("active", b.getAttribute("onclick").includes(`'${owner}'`));
-      });
-      renderTodos();
+      box.scrollTop = box.scrollHeight;
     }
 
     function renderTodos() {
-      const list = document.getElementById("todoList");
-      list.innerHTML = "";
-      const remain = todos.filter(t => !t.done).length;
-      const done = todos.filter(t => t.done).length;
-      document.getElementById("kpiRemain").textContent = remain + "건";
-      document.getElementById("kpiDone").textContent = done + "건";
-      document.getElementById("todoCountBadge").textContent = remain;
-
-      const badgeMap = {
-        "대표님": "badge-amber",
-        "코다리": "badge-green",
-        "글쓰기직원": "badge-blue",
-        "마케팅팀": "badge-blue",
-        "블렌더/모션": "badge-purple",
-        "유튜브팀": "badge-amber"
-      };
-
-      const filtered = currentFilter === "ALL" ? todos : todos.filter(t => t.owner === currentFilter);
-      if (filtered.length === 0) {
-        list.innerHTML = `<div style="text-align:center; padding: 24px; color:#6b7280; font-size:13px;">해당 담당자에게 등록된 할 일이 없습니다.</div>`;
-        return;
-      }
-
-      filtered.forEach(item => {
+      const box = document.getElementById("todoList");
+      box.innerHTML = "";
+      document.getElementById("todoBadge").textContent = todos.filter(t => !t.done).length;
+      todos.forEach(t => {
         const div = document.createElement("div");
-        div.className = "todo-item" + (item.done ? " done" : "");
+        div.className = "todo-item" + (t.done ? " done" : "");
         div.innerHTML = `
           <div class="todo-left">
-            <input type="checkbox" ${item.done ? "checked" : ""} onchange="toggleTodo(${item.id})" />
-            <span class="todo-text">${escapeHtml(item.text)}</span>
+            <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTodo(${t.id})" />
+            <span class="todo-text">${t.text}</span>
           </div>
-          <div class="todo-right">
-            <span class="badge ${badgeMap[item.owner] || 'badge-blue'}">${escapeHtml(item.owner)}</span>
-            <button class="del-btn" onclick="deleteTodo(${item.id})" title="삭제">✕</button>
-          </div>
+          <span class="owner-tag">${t.owner}</span>
+          <button class="del-btn" onclick="delTodo(${t.id})">✕</button>
         `;
-        list.appendChild(div);
+        box.appendChild(div);
       });
-    }
-
-    function addTodo() {
-      const input = document.getElementById("todoInput");
-      const owner = document.getElementById("todoOwner").value;
-      const text = input.value.trim();
-      if (!text) return;
-      todos.unshift({ id: Date.now(), text, owner, done: false });
-      input.value = "";
-      saveTodos();
     }
 
     function toggleTodo(id) {
       todos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
-      saveTodos();
+      localStorage.setItem("jjan_hq_todos", JSON.stringify(todos));
+      renderTodos();
     }
 
-    function deleteTodo(id) {
+    function delTodo(id) {
       todos = todos.filter(t => t.id !== id);
-      saveTodos();
+      localStorage.setItem("jjan_hq_todos", JSON.stringify(todos));
+      renderTodos();
     }
 
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    function toggleAutoMode() {
+      autoMode = !autoMode;
+      const btn = document.getElementById("autoToggleBtn");
+      btn.classList.toggle("off", !autoMode);
+      btn.textContent = autoMode ? "● 24시간 자동운영 ON" : "○ 수동 대기 모드";
     }
 
-    document.getElementById("todoInput").addEventListener("keypress", e => {
-      if (e.key === "Enter") addTodo();
+    function switchView(id, btn) {
+      document.querySelectorAll(".sub-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("view-" + id).classList.add("active");
+      document.querySelectorAll(".nav-pill").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    // ==================== 2D PIXEL ART OFFICE ENGINE ====================
+    const canvas = document.getElementById("officeCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const AGENTS = [
+      { id: "대표님", label: "CEO", x: 140, y: 165, homeX: 140, homeY: 165, tx: 140, ty: 165, color: "#fbbf24", hair: "#451a03", shirt: "#f59e0b", msg: "매출 도는 자리 찾자!", desc: "CEO 전용실 · 최종 의사결정 및 사업 방향 지휘" },
+      { id: "코다리", label: "코다리부장", x: 350, y: 310, homeX: 350, homeY: 310, tx: 460, ty: 240, color: "#60a5fa", hair: "#1e3a8a", shirt: "#2563eb", msg: "시장 영수증 분석 중!", desc: "전략 데스크 · ego-browser 실사 & 웹앱 설계" },
+      { id: "글쓰기", label: "WRITER", x: 560, y: 310, homeX: 560, homeY: 310, tx: 560, ty: 310, color: "#a78bfa", hair: "#312e81", shirt: "#6366f1", msg: "블로그 원고 작성 중...", desc: "작가실 · connect-ai-writer 사람 말투 원고 생성" },
+      { id: "마케팅", label: "MARKETER", x: 800, y: 175, homeX: 800, homeY: 175, tx: 800, ty: 175, color: "#fb923c", hair: "#7c2d12", shirt: "#ea580c", msg: "키워드 스캔 가동!", desc: "홍보 레이더실 · 떡상 벤치마킹 & 키워드 감시" },
+      { id: "3D호랑이", label: "3D호랑이", x: 510, y: 145, homeX: 510, homeY: 145, tx: 460, ty: 185, color: "#fcd34d", hair: "#b45309", shirt: "#d97706", msg: "호랑이 3D 렌더링!", desc: "크리에이티브 룸 · 블렌더 3D 광고 & GIF 움짤" },
+      { id: "유튜브PD", label: "유튜브PD", x: 240, y: 420, homeX: 240, homeY: 420, tx: 300, ty: 420, color: "#4ade80", hair: "#14532d", shirt: "#16a34a", msg: "철만이 14화 대기!", desc: "편집 스튜디오 · 철만이 & ZeroCost Ops 영상" }
+    ];
+
+    let frame = 0;
+
+    function drawPixelRect(x, y, w, h, fill, stroke) {
+      ctx.fillStyle = fill;
+      ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+      }
+    }
+
+    function drawOfficeMap() {
+      // Floor tiles
+      ctx.fillStyle = "#d8cfc2";
+      ctx.fillRect(0, 0, 960, 540);
+      ctx.strokeStyle = "rgba(0,0,0,0.06)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < 960; x += 32) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 540); ctx.stroke();
+      }
+      for (let y = 0; y < 540; y += 32) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(960, y); ctx.stroke();
+      }
+
+      // Top Windows Wall
+      drawPixelRect(0, 0, 960, 56, "#2c353d");
+      for (let wx = 40; wx < 900; wx += 180) {
+        drawPixelRect(wx, 8, 130, 40, "#7dd3fc", "#1e293b");
+        drawPixelRect(wx + 10, 12, 30, 32, "rgba(255,255,255,0.35)");
+      }
+
+      // Room 1: CEO Office (Top Left)
+      drawPixelRect(24, 70, 220, 175, "#e7dcc8", "#64748b");
+      drawPixelRect(30, 76, 80, 18, "#0f172a");
+      ctx.fillStyle = "#fbbf24"; ctx.font = "bold 11px monospace"; ctx.fillText("CEO ROOM", 40, 89);
+      // CEO Desk
+      drawPixelRect(80, 120, 110, 42, "#78350f", "#451a03");
+      drawPixelRect(115, 110, 36, 22, "#1e293b", "#0f172a"); // monitor
+
+      // Room 2: Meeting / Creative Hub (Top Center)
+      drawPixelRect(270, 70, 410, 175, "#e2e8f0", "#64748b");
+      drawPixelRect(278, 76, 135, 18, "#0f172a");
+      ctx.fillStyle = "#4ade80"; ctx.fillText("CONNECT AI LAB", 286, 89);
+      // Round Meeting Table
+      ctx.fillStyle = "#cbd5e1"; ctx.beginPath(); ctx.ellipse(475, 165, 85, 45, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#475569"; ctx.lineWidth = 3; ctx.stroke();
+
+      // Room 3: Marketing Radar (Top Right)
+      drawPixelRect(705, 70, 230, 175, "#ede9fe", "#64748b");
+      drawPixelRect(713, 76, 110, 18, "#0f172a");
+      ctx.fillStyle = "#fb923c"; ctx.fillText("MARKETING", 722, 89);
+      drawPixelRect(755, 120, 110, 40, "#57534e", "#292524");
+      drawPixelRect(780, 112, 30, 20, "#22c55e", "#052e16");
+
+      // Center Workstations (Desks)
+      for (let dx of [310, 520]) {
+        drawPixelRect(dx, 285, 120, 46, "#64748b", "#334155");
+        drawPixelRect(dx + 25, 275, 32, 20, "#0ea5e9", "#0f172a");
+        drawPixelRect(dx + 65, 275, 32, 20, "#22c55e", "#0f172a");
+      }
+
+      // Bottom Left: Lounge & Video Studio
+      drawPixelRect(24, 340, 320, 175, "#dcfce7", "#64748b");
+      drawPixelRect(32, 346, 120, 18, "#0f172a");
+      ctx.fillStyle = "#4ade80"; ctx.fillText("VIDEO STUDIO", 40, 359);
+      // Sofa
+      drawPixelRect(55, 430, 95, 42, "#3b82f6", "#1e3a8a");
+      // Editing Desk
+      drawPixelRect(190, 385, 110, 38, "#78350f", "#451a03");
+
+      // Bottom Right: Library / Archive
+      drawPixelRect(680, 340, 255, 175, "#fef3c7", "#64748b");
+      drawPixelRect(688, 346, 120, 18, "#0f172a");
+      ctx.fillStyle = "#fbbf24"; ctx.fillText("ARCHIVE & 3D", 696, 359);
+      // Bookshelves
+      drawPixelRect(710, 390, 190, 30, "#92400e", "#451a03");
+      drawPixelRect(710, 450, 190, 30, "#92400e", "#451a03");
+
+      // Plants
+      for (let [px, py] of [[255, 255], [690, 255], [40, 310], [900, 310]]) {
+        drawPixelRect(px, py + 12, 16, 14, "#b45309", "#451a03");
+        ctx.fillStyle = "#16a34a"; ctx.beginPath(); ctx.arc(px + 8, py + 6, 12, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    function drawAgent(a) {
+      const bob = Math.sin(frame * 0.12 + a.homeX) * 2;
+      const x = Math.round(a.x);
+      const y = Math.round(a.y + bob);
+
+      // Shadow
+      ctx.fillStyle = "rgba(0,0,0,0.22)";
+      ctx.beginPath(); ctx.ellipse(x, a.y + 18, 13, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+      // Body (Pixel Sprite Style)
+      drawPixelRect(x - 10, y - 4, 20, 18, a.shirt, "#0f172a");
+      // Head
+      drawPixelRect(x - 11, y - 24, 22, 20, "#fde68a", "#0f172a");
+      // Hair/Hat
+      drawPixelRect(x - 12, y - 28, 24, 9, a.hair, "#0f172a");
+      // Eyes
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(x - 6, y - 16, 3, 4);
+      ctx.fillRect(x + 3, y - 16, 3, 4);
+
+      // Nameplate
+      ctx.font = "bold 10px monospace";
+      const tw = ctx.measureText(a.label).width + 10;
+      drawPixelRect(x - tw / 2, a.y + 22, tw, 15, "#0f172a");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(a.label, x - tw / 2 + 5, a.y + 33);
+
+      // Speech Bubble
+      if (a.msg) {
+        ctx.font = "bold 10px sans-serif";
+        const bw = ctx.measureText(a.msg).width + 14;
+        const bx = Math.max(8, Math.min(960 - bw - 8, x - bw / 2));
+        const by = y - 54;
+        drawPixelRect(bx, by, bw, 20, "rgba(15, 23, 42, 0.92)", "#22c55e");
+        ctx.fillStyle = "#ecfdf5";
+        ctx.fillText(a.msg, bx + 7, by + 13);
+      }
+    }
+
+    function tick() {
+      frame++;
+      // Random patrol when autoMode is ON
+      if (autoMode && frame % 180 === 0) {
+        AGENTS.forEach(a => {
+          if (a.id === "대표님") return;
+          if (Math.random() > 0.45) {
+            a.tx = a.homeX + (Math.random() * 90 - 45);
+            a.ty = a.homeY + (Math.random() * 50 - 25);
+          } else {
+            a.tx = a.homeX;
+            a.ty = a.homeY;
+          }
+        });
+      }
+
+      // Move smoothly
+      AGENTS.forEach(a => {
+        a.x += (a.tx - a.x) * 0.04;
+        a.y += (a.ty - a.y) * 0.04;
+      });
+
+      drawOfficeMap();
+      AGENTS.slice().sort((a, b) => a.y - b.y).forEach(drawAgent);
+      requestAnimationFrame(tick);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = 960 / rect.width;
+      const scaleY = 540 / rect.height;
+      const cx = (e.clientX - rect.left) * scaleX;
+      const cy = (e.clientY - rect.top) * scaleY;
+
+      let closest = null;
+      let minDist = 60;
+      AGENTS.forEach(a => {
+        const d = Math.hypot(cx - a.x, cy - a.y);
+        if (d < minDist) { minDist = d; closest = a; }
+      });
+
+      if (closest) {
+        document.getElementById("selName").textContent = `${closest.id} (${closest.label})`;
+        document.getElementById("selDesc").textContent = closest.desc;
+        document.getElementById("statusMsg").textContent = `${closest.id} 선택됨 — "${closest.msg}"`;
+      }
     });
 
-    const TITLES = {
-      office: "🏢 우리 회사 가상 사무실",
-      todo: "✅ 오늘 할 일 & 실행 보드",
-      tracks: "🚀 투 트랙 사업 전략판",
-      assets: "🧰 보유 무기 & 도메인"
-    };
+    function dispatchCommand() {
+      const input = document.getElementById("cmdInput");
+      const targetId = document.getElementById("cmdTarget").value;
+      const txt = input.value.trim();
+      if (!txt) return;
 
-    function switchTab(tabId) {
-      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-      document.getElementById("tab-" + tabId).classList.add("active");
-      document.getElementById("headerTitle").textContent = TITLES[tabId];
-      document.querySelectorAll(".sidebar .nav-btn, .mobile-tabs .nav-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(`button[onclick*="'${tabId}'"]`).forEach(b => b.classList.add("active"));
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+
+      logs.push({ who: "대표님", isCeo: true, time: timeStr, msg: `[${targetId}에게 지시] ${txt}` });
+      logs.push({ who: targetId, isCeo: false, time: timeStr, msg: `충성! "${txt}" 작업 즉시 착수했습니다.` });
+      localStorage.setItem("jjan_hq_logs", JSON.stringify(logs));
+
+      todos.unshift({ id: Date.now(), text: txt, owner: targetId, done: false });
+      localStorage.setItem("jjan_hq_todos", JSON.stringify(todos));
+
+      const ag = AGENTS.find(a => a.id === targetId);
+      if (ag) {
+        ag.msg = txt.slice(0, 14) + (txt.length > 14 ? "..." : "");
+        ag.tx = 475; ag.ty = 175; // 회의실 테이블로 집결!
+      }
+
+      input.value = "";
+      renderLogs();
+      renderTodos();
+      document.getElementById("statusMsg").textContent = `⚡ ${targetId} 직원이 지시를 받고 이동 중입니다!`;
     }
 
-    renderOffice();
+    document.getElementById("cmdInput").addEventListener("keypress", e => {
+      if (e.key === "Enter") dispatchCommand();
+    });
+
+    renderLogs();
     renderTodos();
+    tick();
   </script>
 </body>
 </html>
